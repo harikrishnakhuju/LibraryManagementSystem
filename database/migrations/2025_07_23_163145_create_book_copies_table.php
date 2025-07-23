@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('books', function (Blueprint $table) {
+        Schema::create('book_copies', function (Blueprint $table) {
             $table->id();
-            $table->string('isbn')->unique();
-            $table->string('title');
-            $table->string("author");
-            $table->string("category");
-            $table->unsignedInteger('edition');
-            // $table->unsignedInteger('coipes_available')->default(0);
-            $table->float('price');
+            $table->foreignId('book_id')->constrained('books')->onDelete('cascade');
+            $table->string('barcode')->unique()->nullable();
+            $table->enum('status', ['available','borrowed','lost','damaged','replace'])->default('available');
             $table->timestamps();
         });
     }
@@ -29,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('books');
+        Schema::dropIfExists('book_copies');
     }
 };

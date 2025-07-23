@@ -11,15 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('books', function (Blueprint $table) {
+        Schema::create('staff', function (Blueprint $table) {
             $table->id();
-            $table->string('isbn')->unique();
-            $table->string('title');
-            $table->string("author");
-            $table->string("category");
-            $table->unsignedInteger('edition');
-            // $table->unsignedInteger('coipes_available')->default(0);
-            $table->float('price');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->enum('staff_type', ['teacher', 'librarian', 'admin','other']);
+            $table->string('position')->nullable();
+            $table->string('department')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('books');
+        Schema::dropIfExists('staff');
     }
 };

@@ -22,7 +22,6 @@ class BookFactory extends Factory
             'author' => fake()->name(),
             'edition' =>fake()->numberBetween(1,15),
             'price' =>fake()->numberBetween(100,1500),
-            'published_year'=> fake()->year(),
         ];
     }
 }

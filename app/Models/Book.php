@@ -18,4 +18,14 @@ class Book extends Model
         'price',
         'published_year',
     ];
+
+    public function publisherDetails()
+    {
+        return $this -> belongsTo(Publisher::class);
+    }
+
+    public function bookCopies()
+    {
+        return $this -> hasMany(BookCopy::class);
+    }
 }

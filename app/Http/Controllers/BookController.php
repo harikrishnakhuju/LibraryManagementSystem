@@ -35,7 +35,6 @@ class BookController extends Controller
             'author' => 'required | string',
             'edition' => 'required | integer',
             'price' => 'required | float',
-            'published_year' => 'nullable | digits:4',
         ]);
 
         $book = Book::create($validate);
@@ -46,7 +45,7 @@ class BookController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Book $id)
+    public function show($id)
     {
         $book = Book::find($id);
         return $book ? response()->json($book) : response()->json(['message' => 'Book not Found'], 404);
@@ -55,7 +54,7 @@ class BookController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Book $book)
+    public function edit($id)
     {
         //
     }
@@ -76,7 +75,6 @@ class BookController extends Controller
             'author' => 'sometimes|required|string',
             'edition' => 'sometimes|required|integer',
             'price' => 'sometimes|required|float',
-            'published_year' => 'nullable|digits:4',
         ]);
 
         $book->update($validate);
@@ -95,6 +93,5 @@ class BookController extends Controller
 
         $book ->delete();
         return response()->json(['message' => 'Book deleted']);
-
     }
 }

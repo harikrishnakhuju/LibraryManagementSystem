@@ -22,8 +22,7 @@ return new class extends Migration
             $table->string("address");
             $table->string('phone');
             $table->timestamp('email_verified_at')->nullable();
-            $table->enum('role', ['student', 'teacher', 'librarian', 'admin']);
-            $table->enum('type', ['reader', 'staff']);
+            $table->enum('role', ['student', 'staff']);
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
