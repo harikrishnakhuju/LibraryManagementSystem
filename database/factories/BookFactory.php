@@ -29,11 +29,17 @@ class BookFactory extends Factory
             'isbn' => fake()->isbn13(),
             'title' => fake()->sentence(3),
             'author' => fake()->name(),
+<<<<<<< Updated upstream
             'category' => Arr::random($bookCategory),
             'edition' =>fake()->numberBetween(1,15),
             'noOfCopy' => fake() -> numberBetween(1, 15),
             'price' =>fake()->numberBetween(100,1500),
             'publisher_id' => Publisher::inRandomOrder()->first()->id,
+=======
+            'edition' => fake()->numberBetween(1, 15),
+            'price' => fake()->numberBetween(100, 1500),
+            'category' => $this->faker->word
+>>>>>>> Stashed changes
         ];
     }
 }
