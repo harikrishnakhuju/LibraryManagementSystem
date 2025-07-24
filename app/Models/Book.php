@@ -14,12 +14,14 @@ class Book extends Model
         'isbn',
         'title',
         'author',
+        'category',
         'edition',
+        'noOfCopy',
         'price',
-        'published_year',
+        'publisher_id',
     ];
 
-    public function publisherDetails()
+    public function publisher()
     {
         return $this -> belongsTo(Publisher::class);
     }

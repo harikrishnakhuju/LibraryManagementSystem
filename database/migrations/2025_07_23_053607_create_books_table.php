@@ -16,10 +16,11 @@ return new class extends Migration
             $table->string('isbn')->unique();
             $table->string('title');
             $table->string("author");
-            $table->string("category");
+            $table->string("category")->nullable();
             $table->unsignedInteger('edition');
-            // $table->unsignedInteger('coipes_available')->default(0);
+            $table->unsignedInteger('noOfCopy')->default(0);
             $table->float('price');
+            $table->foreignId('publisher_id')->constrained('publishers')->onDelete('cascade');
             $table->timestamps();
         });
     }

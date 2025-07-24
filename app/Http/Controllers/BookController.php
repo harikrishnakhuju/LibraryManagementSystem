@@ -33,6 +33,7 @@ class BookController extends Controller
             'isbn' => 'required | unique:books',
             'title' => 'required| string | max:255',
             'author' => 'required | string',
+            'category' => 'required | string',
             'edition' => 'required | integer',
             'price' => 'required | float',
         ]);

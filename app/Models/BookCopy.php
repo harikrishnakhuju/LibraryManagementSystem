@@ -11,6 +11,7 @@ class BookCopy extends Model
     use HasFactory;
 
     protected $fillable = [
+        'book_id',
         'barcode',
         'status',
     ];
