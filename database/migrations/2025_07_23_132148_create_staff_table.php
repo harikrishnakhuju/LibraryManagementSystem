@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('staff', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->enum('staff_type', ['teacher', 'librarian', 'admin','other']);
+            $table->enum('staff_type', ['teacher', 'HOD','other']);
             $table->string('position')->nullable();
             $table->string('department')->nullable();
             $table->timestamps();

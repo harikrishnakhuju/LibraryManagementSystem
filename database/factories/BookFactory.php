@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Publisher;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Arr;
 
@@ -28,9 +29,11 @@ class BookFactory extends Factory
             'isbn' => fake()->isbn13(),
             'title' => fake()->sentence(3),
             'author' => fake()->name(),
-            'edition' =>fake()->numberBetween(1,15),
             'category' => Arr::random($bookCategory),
+            'edition' =>fake()->numberBetween(1,15),
+            'noOfCopy' => fake() -> numberBetween(1, 15),
             'price' =>fake()->numberBetween(100,1500),
+            'publisher_id' => Publisher::inRandomOrder()->first()->id,
         ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Book;
+use App\Models\Publisher;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +18,13 @@ class BookCopyFactory extends Factory
      */
     public function definition(): array
     {
+        $status = $this->faker->randomElement(['available','borrowed','lost','damage','replace']);
         return [
-            //
+            'book_id' => Book::inRandomOrder()->first()->id,
+            'publisher_id' => Publisher::inRandomOrder()->first()->id,
+            'barcode' => fake()->uuid(),
+            'status' => $status,
+
         ];
     }
 }

@@ -13,11 +13,17 @@ class BookCopy extends Model
     protected $fillable = [
         'book_id',
         'barcode',
+        'publisher_id',
         'status',
     ];
 
     public function book()
     {
         return $this -> belongsTo(Book::class);
+    }
+
+    public function transaction()
+    {
+        return $this-> hasMany(BookTransaction::class);
     }
 }

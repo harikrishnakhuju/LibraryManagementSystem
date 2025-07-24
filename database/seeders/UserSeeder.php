@@ -2,9 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Staff;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Support\Arr;
+use App\Models\Student;
 
 class UserSeeder extends Seeder
 {
@@ -13,6 +16,44 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
+        $departments = [
+            'Computer',
+            'Electrical',
+            'Civil',
+            'Mechanical',
+            'Architecture'
+        ];
+
+        $StaffTypes = [
+            'teacher',
+            'teacher',
+            'Hod',
+            'other',
+            'teacher'
+        ];
+
+        $positions = [
+            'Assistant Lecturer',
+            'Teaching Assistant',
+            'Full-time Lecturer',
+            'Senior Lecturer'
+        ];
+
+        User::factory()->count(10)->create()->each(function ($user) use ($departments,$StaffTypes,$positions) {
+            if ($user->role === 'student') {
+                Student::create([
+                    'user_id' => $user->id,
+                    'rollno' => fake()->numberBetween(1, 100),
+                    'department' => Arr::random($departments),
+                ]);
+            } else {
+                Staff::create([
+                    'user_id' => $user->id,
+                    'staff_type' => Arr::random($StaffTypes),
+                    'position' => Arr::random($positions),
+                    'department' => Arr::random($departments),
+                ]);
+            }
+        });
     }
 }

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('book_id')->constrained('books')->onDelete('cascade');
             $table->string('barcode')->unique()->nullable();
             $table->enum('status', ['available','borrowed','lost','damaged','replace'])->default('available');
+            $table->foreignId('publisher_id')->constrained('publishers')->onDelete('cascade');
             $table->timestamps();
         });
     }
