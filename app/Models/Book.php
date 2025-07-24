@@ -18,11 +18,7 @@ class Book extends Model
         'edition',
         'noOfCopy',
         'price',
-<<<<<<< Updated upstream
         'publisher_id',
-=======
-        'published_year'
->>>>>>> Stashed changes
     ];
 
     public function publisher()

@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Book;
+use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\UpdateBookRequest;
+
 class BookController extends Controller
 {
     public function index(){
       return Book::all();
     }
-<<<<<<< Updated upstream
 
     /**
      * Show the form for creating a new resource.
@@ -89,9 +91,5 @@ class BookController extends Controller
 
         $book ->delete();
         return response()->json(['message' => 'Book deleted']);
-=======
-    public function show($id){
-      return Book::findOrFail($id);
->>>>>>> Stashed changes
     }
 }
