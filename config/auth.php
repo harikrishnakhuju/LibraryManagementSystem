@@ -39,7 +39,6 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
-            'provider' => 'admin_libs',
         ],
     ],
 
@@ -70,10 +69,6 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
-        'admin_libs' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\AdminLib::class),
-        ],
     ],
 
     /*
@@ -98,12 +93,6 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
-            'throttle' => 60,
-        ],
-        'admin_libs' => [
-            'provider' => 'admin_libs',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
             'throttle' => 60,

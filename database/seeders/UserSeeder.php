@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Arr;
 use App\Models\Student;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -55,5 +56,18 @@ class UserSeeder extends Seeder
                 ]);
             }
         });
+
+        User::create([
+            'firstName' => 'Suresh',
+            'middleName' => null,
+            'lastName' => 'Shreshta',
+            'email' => 'sureshteacher@library.com',
+            'address' => 'Lalitpur, Nepal',
+            'phone' => '9800000002',
+            'borrowLimit' => 5,
+            'role' => 'staff',
+            'password' => Hash::make('SecurePassword123'),
+        ]);
+
     }
 }
