@@ -17,6 +17,7 @@ type RegisterForm = {
     address: string;
     phone: string;
     role: 'student' | 'staff';
+    borrowLimit:string;
     password: string;
     password_confirmation: string;
 };
@@ -30,6 +31,7 @@ export default function Register() {
         address: '',
         phone: '',
         role: 'student',
+        borrowLimit:'',
         password: '',
         password_confirmation: '',
     });
@@ -146,6 +148,17 @@ export default function Register() {
                             <option value="staff">Staff</option>
                         </select>
                         <InputError message={errors.role} />
+                    </div>
+                    <div>
+                        <Label htmlFor="borrowLimit">Borrow Limit</Label>
+                        <Input
+                            id="borrowLimit"
+                            type="number"
+                            value={data.borrowLimit}
+                            onChange={(e) => setData('borrowLimit', e.target.value)}
+                            disabled={processing}
+                        />
+                        <InputError message={errors.borrowLimit} />
                     </div>
 
                     <div>

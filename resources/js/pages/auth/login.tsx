@@ -36,13 +36,13 @@ export default function Login({ status, canResetPassword }: LoginProps) {
     };
 
     return (
-        <AuthLayout title="Log in to your account 1123" description="Enter your email and password below to log in123">
+        <AuthLayout title="Log in to your account" description="Enter your email and password below to log in">
             <Head title="Log in to Library Mgmt system" />
 
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="email">Email address(Suresh)</Label>
+                        <Label htmlFor="email">Email address</Label>
                         <Input
                             id="email"
                             type="email"
