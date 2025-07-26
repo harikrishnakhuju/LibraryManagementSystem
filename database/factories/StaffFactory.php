@@ -18,7 +18,6 @@ class StaffFactory extends Factory
      */
     public function definition(): array
     {
-
         $StaffTypes = [
             'teacher',
             'teacher',
@@ -42,14 +41,8 @@ class StaffFactory extends Factory
             'Architecture'
         ];
 
-
-
         return [
-<<<<<<< Updated upstream
             'user_id' => User::inRandomOrder()->first()->id,
-=======
-            'user_id' => User::factory(), 
->>>>>>> Stashed changes
             'staff_type' => Arr::random($StaffTypes),
             'position' => Arr::random($positions),
             'department' => Arr::random($departments),

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string("address");
             $table->string('phone');
             $table->integer('borrowLimit');
-            $table->enum('role', ['student', 'staff']);
+            $table->enum('role', ['student', 'staff','admin','librarain']);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
