@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string("address");
             $table->string('phone');
-            $table->integer('borrowLimit');
+            $table->integer('borrowLimit')->nullable()->default(5);
             $table->enum('role', ['student', 'staff']);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

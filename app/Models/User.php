@@ -24,8 +24,8 @@ class User extends Authenticatable
         'email',
         'address',
         'phone',
-        'borrowLimit',
         'role',
+        'borrowLimit',
         'password',
     ];
 

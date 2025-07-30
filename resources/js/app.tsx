@@ -17,7 +17,7 @@ createInertiaApp({
        < StudentList></StudentList>
     },
     progress: {
-        color: '#4B5563',
+        color: '#0063eeff',
     },
 });
 

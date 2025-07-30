@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\AdminLib;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,7 +20,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('auth/register');
+        return Inertia::render('admin/auth/register');
     }
 
     /**
@@ -34,16 +34,14 @@ class RegisteredUserController extends Controller
             'firstName' => 'required|string|max:255',
             'middleName' => 'nullable|string|max:255',
             'lastName' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'email' => 'required|string|lowercase|email|max:255|unique:'.AdminLib::class,
             'address' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
-            'role' => 'required|in:student,staff',
-            'borrowLimit' => 'nullable|integer',
+            'role' => 'required|in:admin,librarian',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
-            // 'name' => $request->name,
+        $admin = AdminLib::create([
             'firstName' => $request->firstName,
             'middleName' => $request -> midleName,
             'lastName' => $request -> lastName,
@@ -51,14 +49,13 @@ class RegisteredUserController extends Controller
             'address' => $request->address,
             'phone' => $request->phone,
             'role' => $request->role,
-            'borrowLimit' => $request->borrowLimit,
             'password' => Hash::make($request->password),
         ]);
 
-        event(new Registered($user));
+        event(new Registered($admin));
 
-        Auth::login($user);
+        Auth::guard('admin')->login($admin);
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('admin.dashboard', absolute: false));
     }
 }

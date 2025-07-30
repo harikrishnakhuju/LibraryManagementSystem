@@ -4,13 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class AdminLib extends Model
+
+class AdminLib extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\AdminLibFactory> */
-    use HasFactory;
 
-        /**
+        /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable;
+
+    protected $guard = 'admin';
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -48,4 +53,5 @@ class AdminLib extends Model
             'password' => 'hashed',
         ];
     }
+
 }

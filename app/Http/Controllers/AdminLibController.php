@@ -8,6 +8,19 @@ use App\Http\Requests\UpdateAdminLibRequest;
 
 class AdminLibController extends Controller
 {
+
+//     public function login(Request $request)
+// {
+//     $credentials = $request->only('email', 'password');
+
+//     if (Auth::guard('adminlib')->attempt($credentials)) {
+//         return redirect()->intended('/adminlib/dashboard');
+//     }
+
+//     return back()->withErrors([
+//         'email' => 'Invalid credentials for admin/librarian.',
+//     ]);
+// }
     /**
      * Display a listing of the resource.
      */
