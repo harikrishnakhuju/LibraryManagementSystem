@@ -5,28 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\AdminLib;
 use App\Http\Requests\StoreAdminLibRequest;
 use App\Http\Requests\UpdateAdminLibRequest;
+use Illuminate\Validation\Rules;
 
 class AdminLibController extends Controller
 {
 
-//     public function login(Request $request)
-// {
-//     $credentials = $request->only('email', 'password');
-
-//     if (Auth::guard('adminlib')->attempt($credentials)) {
-//         return redirect()->intended('/adminlib/dashboard');
-//     }
-
-//     return back()->withErrors([
-//         'email' => 'Invalid credentials for admin/librarian.',
-//     ]);
-// }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        return response()->json(AdminLib::all());
     }
 
     /**
@@ -42,7 +31,29 @@ class AdminLibController extends Controller
      */
     public function store(StoreAdminLibRequest $request)
     {
-        //
+        $request->validate([
+            'firstName' => 'required|string|max:255',
+            'middleName' => 'nullable|string|max:255',
+            'lastName' => 'required|string|max:255',
+            'email' => 'required|string|lowercase|email|max:255|unique:' . AdminLib::class,
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'role' => 'required|in:admin,librarian',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $librarian = AdminLib::create([
+            'firstName' => $request->firstName,
+            'middleName' => $request->midleName,
+            'lastName' => $request->lastName,
+            'email' => $request->email,
+            'address' => $request->address,
+            'phone' => $request->phone,
+            'password' => bcrypt($request->password),
+            'role' => 'librarian'
+        ]);
+
+        return response()->json(["Message" => 'Librarian Created Successfully', 'admin'=>$librarian],201);
     }
 
     /**
@@ -74,6 +85,7 @@ class AdminLibController extends Controller
      */
     public function destroy(AdminLib $adminLib)
     {
-        //
+        $adminLib->delete();
+        return response()->json(['message' => 'User deleted successfully']);
     }
 }
