@@ -43,9 +43,9 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::post('users', [UserManagementController::class, 'store'])->name('admin.user.store');
     Route::delete('users/{user}', [UserManagementController::class, 'destroy'])->name('admin.user.destroy');
 
-    Route::get('adminUsers', [AdminLibController::class, 'index'])->name('admin.librarians.store');
+    Route::get('adminUsers', [AdminLibController::class, 'index'])->name('admin.librarians.index');
     Route::post('adminUsers', [AdminLibController::class, 'store'])->name('admin.librarians.store');
-    Route::delete('adminUsers/{librarian}', [AdminLibController::class, 'destroy'])->name('admin.librarians.store');
+    Route::delete('adminUsers/{librarian}', [AdminLibController::class, 'destroy'])->name('admin.librarians.destroy');
 
 
 
