@@ -14,6 +14,7 @@ Route::get('/user', function (Request $request) {
 Route::apiResource('students', StudentController::class);
 Route::apiResource('staff', StaffController::class);
 Route::apiResource('books', BookController::class);
+Route::middleware('auth:sanctum')->get('/books', [BookController::class, 'index']);
 Route::get('books/${id}',[BookController::class,'show']);
 Route::get('/books/search/${query}', [BookController::class, 'search']);
 

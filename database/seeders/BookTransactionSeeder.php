@@ -13,6 +13,6 @@ class BookTransactionSeeder extends Seeder
      */
     public function run(): void
     {
-        BookTransaction::factory()->count(10)->create();
+        BookTransaction::factory()->count(5)->create();
     }
 }

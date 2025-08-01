@@ -15,7 +15,7 @@ class BookSeeder extends Seeder
      */
     public function run(): void
     {
-        Book::factory()->count(20)->create()->each(
+        Book::factory()->count(10)->create()->each(
             function ($book) {
                 for ($i = 0; $i < $book->noOfCopy; $i++) {
                     BookCopy::create([
