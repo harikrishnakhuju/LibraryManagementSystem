@@ -40,6 +40,14 @@ Route::get('/books', function () {
     return Inertia::render('User/Books/book');
 });
 
+Route::get('/catalog/overdue-borrowers', function () {
+    return Inertia::render('User/Catalogs/overdueborrower');
+});
+
+Route::get('/catalog/borrowed-books', function () {
+    return Inertia::render('User/Catalogs/borrowedbook');
+});
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 require __DIR__.'/admin-auth.php';
