@@ -1,14 +1,23 @@
-// resources/js/Pages/User/Books/Index.jsx
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+// Define the Book type
+type Book = {
+    id: number;
+    isbn: string;
+    title: string;
+    author: string;
+    category: string;
+    edition: string;
+    price: number;
+};
+
 const BookIndex = () => {
-    const [books, setBooks] = useState([]);
+    const [books, setBooks] = useState<Book[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get('/api/books')
+        axios.get<Book[]>('/api/books') // Optional: help axios understand the expected response
             .then(res => {
                 setBooks(res.data);
                 setLoading(false);
@@ -37,7 +46,7 @@ const BookIndex = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {books.map(book => (
+                        {books.map((book) => (
                             <tr key={book.id} className="text-center">
                                 <td className="p-2 border">{book.isbn}</td>
                                 <td className="p-2 border">{book.title}</td>

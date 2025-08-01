@@ -16,7 +16,7 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Books',
         href: '/books',
-        icon: BookOpen,
+        icon: Folder,
     },
 ];
 
