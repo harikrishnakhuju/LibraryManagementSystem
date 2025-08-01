@@ -37,6 +37,7 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('admin/dashboard');
     })->name('admin.dashboard');
+    
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('admin.logout');
 
     Route::get('users', [UserManagementController::class, 'index'])->name('admin.user.index');
@@ -47,6 +48,7 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::post('adminUsers', [AdminLibController::class, 'store'])->name('admin.librarians.store');
     Route::delete('adminUsers/{librarian}', [AdminLibController::class, 'destroy'])->name('admin.librarians.destroy');
 
-
-
+    Route::get('/books', function () {
+        return Inertia::render('User/Books/book');
+    });
 });

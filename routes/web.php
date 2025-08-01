@@ -14,17 +14,18 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
-        $user = Auth::user();
-
-        // Redirect admin to /admin/dashboard
-        if ($user->role === 'admin') {
-            return redirect('/admin/dashboard');
-        }
-
-        // Other roles go to normal dashboard
         return Inertia::render('dashboard');
     })->name('dashboard');
+    Route::get('/books', function () {
+        return Inertia::render('User/Books/book');
+    });
+    Route::get('/catalog/overdue-borrowers', function () {
+        return Inertia::render('User/Catalogs/overdueborrower');
+    });
 
+    Route::get('/catalog/borrowed-books', function () {
+        return Inertia::render('User/Catalogs/borrowedbook');
+    });
 });
 
 // web.php
@@ -36,18 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // All authenticated users
 // Route::get('/books', [BookController::class, 'index']);
 
-Route::get('/books', function () {
-    return Inertia::render('User/Books/book');
-});
 
-Route::get('/catalog/overdue-borrowers', function () {
-    return Inertia::render('User/Catalogs/overdueborrower');
-});
-
-Route::get('/catalog/borrowed-books', function () {
-    return Inertia::render('User/Catalogs/borrowedbook');
-});
-
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
-require __DIR__.'/admin-auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
+require __DIR__ . '/admin-auth.php';
