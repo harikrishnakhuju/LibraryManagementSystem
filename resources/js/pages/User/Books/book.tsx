@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/react';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Book',
+        href: '/books',
+    },
+];
 
 // Define the Book type
 type Book = {
@@ -29,37 +39,40 @@ const BookIndex = () => {
     }, []);
 
     return (
-        <div className="p-4">
-            <h1 className="text-2xl font-bold mb-4">Books</h1>
-            {loading ? (
-                <p>Loading...</p>
-            ) : (
-                <table className="table-auto w-full border">
-                    <thead>
-                        <tr className="bg-gray-200">
-                            <th className="p-2 border">ISBN</th>
-                            <th className="p-2 border">Title</th>
-                            <th className="p-2 border">Author</th>
-                            <th className="p-2 border">Category</th>
-                            <th className="p-2 border">Edition</th>
-                            <th className="p-2 border">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {books.map((book) => (
-                            <tr key={book.id} className="text-center">
-                                <td className="p-2 border">{book.isbn}</td>
-                                <td className="p-2 border">{book.title}</td>
-                                <td className="p-2 border">{book.author}</td>
-                                <td className="p-2 border">{book.category}</td>
-                                <td className="p-2 border">{book.edition}</td>
-                                <td className="p-2 border">Rs. {book.price}</td>
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Book" />
+            <div className="p-4">
+                <h1 className="text-2xl font-bold mb-4">Books</h1>
+                {loading ? (
+                    <p>Loading...</p>
+                ) : (
+                    <table className="table-auto w-full border">
+                        <thead>
+                            <tr className="bg-gray-200">
+                                <th className="p-2 border">ISBN</th>
+                                <th className="p-2 border">Title</th>
+                                <th className="p-2 border">Author</th>
+                                <th className="p-2 border">Category</th>
+                                <th className="p-2 border">Edition</th>
+                                <th className="p-2 border">Price</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            )}
-        </div>
+                        </thead>
+                        <tbody>
+                            {books.map((book) => (
+                                <tr key={book.id} className="text-center">
+                                    <td className="p-2 border">{book.isbn}</td>
+                                    <td className="p-2 border">{book.title}</td>
+                                    <td className="p-2 border">{book.author}</td>
+                                    <td className="p-2 border">{book.category}</td>
+                                    <td className="p-2 border">{book.edition}</td>
+                                    <td className="p-2 border">Rs. {book.price}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+            </div>
+        </AppLayout>
     );
 };
 
