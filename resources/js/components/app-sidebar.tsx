@@ -57,6 +57,11 @@ export function AppSidebar() {
                 href: '/books',
                 icon: Folder,
             },
+            {
+                title: 'Catalog',
+                href: '/catalog',
+                icon: Clock,
+            },
         ];
 
 

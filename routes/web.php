@@ -19,6 +19,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/books', function () {
         return Inertia::render('User/Books/book');
     });
+    Route::get('/catalog',function(){
+        return Inertia::render('User/Catalogs/catalog');
+    });
     Route::get('/catalog/overdue-borrowers', function () {
         return Inertia::render('User/Catalogs/overdueborrower');
     });
