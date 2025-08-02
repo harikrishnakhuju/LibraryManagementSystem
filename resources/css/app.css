@@ -68,6 +68,7 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+
     *,
     ::after,
     ::before,
@@ -75,6 +76,38 @@
     ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
     }
+}
+
+@layer base {
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: var(--table-row-bg);
+        color: var(--table-row-color);
+    }
+
+    th {
+        background-color: var(--table-header-bg);
+        color: var(--table-header-color);
+        padding: 0.5rem;
+        border: 1px solid var(--table-border);
+    }
+
+    td {
+        background-color: var(--table-row-bg);
+        color: var(--table-row-color);
+        padding: 0.5rem;
+        border: 1px solid var(--table-border);
+    }
+
+    tr:nth-child(even) td {
+        background-color: var(--table-row-even-bg);
+    }
+
+    tr:nth-child(odd) td {
+        background-color: var(--table-row-odd-bg);
+    }
+
 }
 
 :root {
@@ -111,6 +144,15 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.87 0 0);
+
+    --table-header-bg: oklch(0.92 0 0);
+    --table-header-color: oklch(0.145 0 0);
+    --table-row-bg: oklch(1 0 0);
+    --table-row-color: oklch(0.145 0 0);
+    --table-row-even-bg: oklch(0.98 0 0);
+    --table-row-odd-bg: oklch(1 0 0);
+    --table-border: oklch(0.85 0 0);
+
 }
 
 .dark {
@@ -146,6 +188,15 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(0.269 0 0);
     --sidebar-ring: oklch(0.439 0 0);
+
+    --table-header-bg: oklch(0.42 0 0);
+    --table-header-color: oklch(0.985 0 0);
+    --table-row-bg: oklch(0.145 0 0);
+    --table-row-color: oklch(0.985 0 0);
+    --table-row-even-bg: oklch(0.169 0 0);
+    --table-row-odd-bg: oklch(0.145 0 0);
+    --table-border: oklch(0.269 0 0);
+
 }
 
 @layer base {

@@ -32,7 +32,7 @@ export default function Welcome() {
           )}
         </nav>
 
-      <Head title="Welcome" />
+      <Head title="My Library" />
       <div className="flex min-h-screen flex-col items-center justify-center bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] dark:text-[#EDEDEC] p-6">
         <h1 className="text-3xl font-bold mb-6">Welcome to the Library Management System</h1>
 

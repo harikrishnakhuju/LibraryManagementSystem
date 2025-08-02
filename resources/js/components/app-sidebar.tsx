@@ -44,6 +44,11 @@ export function AppSidebar() {
         [
             { title: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
             { title: 'Books', href: '/admin/books', icon: Folder },
+            {
+                title: 'Catalog',
+                href: '/admin/catalog/borrowed-books',
+                icon: Clock,
+            },
         ]
         :
         [

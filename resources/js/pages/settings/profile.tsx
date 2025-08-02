@@ -11,12 +11,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-import { getDisplayName } from '@/utils/user';
+import {getFirstName, getLastName, getMiddleName } from '@/utils/user';
 
 
 
 type ProfileForm = {
-    name: string;
+    firstName: string;
+    middleName: string;
+    lastName: string;
     email: string;
 };
 
@@ -30,14 +32,16 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
             title: 'Profile settings',
             href: '/admin/settings/profile',
         },
-    ]:[
+    ] : [
         {
             title: 'Profile settings',
             href: '/settings/profile',
         },
     ];
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm<Required<ProfileForm>>({
-        name: getDisplayName(auth.user),
+        firstName: getFirstName(auth.user),
+        middleName: getMiddleName(auth.user),
+        lastName: getLastName(auth.user),
         email: auth.user.email,
     });
 
@@ -58,20 +62,50 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                     <HeadingSmall title="Profile information" description="Update your name and email address" />
 
                     <form onSubmit={submit} className="space-y-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="name">Name</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="firstName">First Name</Label>
+                                <Input
+                                    id="firstName"
+                                    className="mt-1 block w-full"
+                                    value={data.firstName}
+                                    onChange={(e) => setData('firstName', e.target.value)}
+                                    required
+                                    autoComplete="firstName"
+                                    placeholder="first Name"
+                                />
 
-                            <Input
-                                id="name"
-                                className="mt-1 block w-full"
-                                value={data.name}
-                                onChange={(e) => setData('name', e.target.value)}
-                                required
-                                autoComplete="name"
-                                placeholder="Full name"
-                            />
+                                <InputError className="mt-2" message={errors.firstName} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="middleName">Middle Name</Label>
 
-                            <InputError className="mt-2" message={errors.name} />
+                                <Input
+                                    id="middleName"
+                                    className="mt-1 block w-full"
+                                    value={data.middleName}
+                                    onChange={(e) => setData('middleName', e.target.value)}
+                                    autoComplete="middleName"
+                                    placeholder="middleName"
+                                />
+
+                                <InputError className="mt-2" message={errors.middleName} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="lastName">Last Name</Label>
+
+                                <Input
+                                    id="lastName"
+                                    className="mt-1 block w-full"
+                                    value={data.lastName}
+                                    onChange={(e) => setData('lastName', e.target.value)}
+                                    required
+                                    autoComplete="lastName"
+                                    placeholder="lastName"
+                                />
+
+                                <InputError className="mt-2" message={errors.lastName} />
+                            </div>
                         </div>
 
                         <div className="grid gap-2">
