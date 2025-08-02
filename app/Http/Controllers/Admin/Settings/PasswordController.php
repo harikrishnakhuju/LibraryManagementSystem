@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Settings;
+namespace App\Http\Controllers\Admin\Settings;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -18,7 +18,7 @@ class PasswordController extends Controller
     public function edit(): Response
     {
         return Inertia::render('settings/password', [
-            'guard' => 'web',
+            'guard' => 'admin',
         ]);
     }
 
@@ -32,7 +32,7 @@ class PasswordController extends Controller
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
-        $request->user()->update([
+        $request->user('admin')->update([
             'password' => Hash::make($validated['password']),
         ]);
 

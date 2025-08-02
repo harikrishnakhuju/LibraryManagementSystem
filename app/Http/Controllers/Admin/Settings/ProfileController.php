@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Settings;
+namespace App\Http\Controllers\Admin\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;  
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,8 +20,8 @@ class ProfileController extends Controller
     {
         return Inertia::render('settings/profile', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => $request->session()->get('status'),
-            'guard' => 'web',
+            'status' => $request->session()->get('status'),    
+            'guard' => 'admin',
         ]);
     }
 
@@ -32,13 +32,13 @@ class ProfileController extends Controller
     {
         $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($request->user('admin')->isDirty('email')) {
+            $request->user('admin')->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $request->user('admin')->save();
 
-        return to_route('profile.edit');
+        return to_route('admin.profile.edit');
     }
 
     /**
@@ -50,7 +50,7 @@ class ProfileController extends Controller
             'password' => ['required', 'current_password'],
         ]);
 
-        $user = $request->user();
+        $user = $request->user('admin');
 
         Auth::logout();
 

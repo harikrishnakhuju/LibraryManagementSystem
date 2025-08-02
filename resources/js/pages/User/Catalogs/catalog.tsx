@@ -56,7 +56,7 @@ export default function CatalogLayout({ children }: { children: React.ReactNode 
         </div>
 
         {/* Page Content */}
-        <div className="bg-white shadow p-4 rounded-md">{children}</div>
+        <div className="bg-white shadow p-4 rounded-md">borrowed</div>
       </div>
     </AppLayout>
   );

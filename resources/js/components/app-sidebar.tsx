@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link, usePage} from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Clock } from 'lucide-react';
+import {LayoutDashboard, BookOpen, Folder, LayoutGrid, Clock } from 'lucide-react';
 import AppLogo from './app-logo';
 
 // const mainNavItems: NavItem[] = [
@@ -42,7 +42,7 @@ export function AppSidebar() {
 
     const mainNavItems: NavItem[] = isAdmin ?
         [
-            { title: 'Dashboard', href: '/admin/dashboard', icon: LayoutGrid },
+            { title: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
             { title: 'Books', href: '/admin/books', icon: Folder },
         ]
         :
@@ -50,16 +50,16 @@ export function AppSidebar() {
             {
                 title: 'Dashboard',
                 href: '/dashboard',
-                icon: LayoutGrid,
+                icon: LayoutDashboard,
             },
             {
                 title: 'Books',
                 href: '/books',
-                icon: Folder,
+                icon: BookOpen,
             },
             {
                 title: 'Catalog',
-                href: '/catalog',
+                href: '/catalog/borrowed-books',
                 icon: Clock,
             },
         ];

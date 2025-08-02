@@ -22,7 +22,7 @@ class AdminLibSeeder extends Seeder
             'address' => 'Kathmandu, Nepal',
             'phone' => '9800000001',
             'role' => 'Admin',
-            'password' => Hash::make('SecurePassword123'),
+            'password' => Hash::make('12345678'),
         ]);
 
         AdminLib::create([
@@ -33,7 +33,7 @@ class AdminLibSeeder extends Seeder
             'address' => 'Lalitpur, Nepal',
             'phone' => '9800000002',
             'role' => 'Librarian',
-            'password' => Hash::make('SecurePassword123'),
+            'password' => Hash::make('12345678'),
         ]);
 
     }

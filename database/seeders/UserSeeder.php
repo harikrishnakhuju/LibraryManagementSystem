@@ -66,7 +66,7 @@ class UserSeeder extends Seeder
             'phone' => '9800000002',
             'borrowLimit' => 5,
             'role' => 'staff',
-            'password' => Hash::make('SecurePassword123'),
+            'password' => Hash::make('12345678'),
         ]);
 
     }
