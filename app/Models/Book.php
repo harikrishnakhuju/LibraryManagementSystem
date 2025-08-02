@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
 {
-    /** @use HasFactory<\Database\Factories\BookFactory> */
     use HasFactory;
+    /** @use HasFactory<\Database\Factories\BookFactory> */
 
     protected $fillable = [
         'isbn',
@@ -19,6 +19,7 @@ class Book extends Model
         'noOfCopy',
         'price',
         'publisher_id',
+        'published_year'
     ];
 
     public function publisher()
