@@ -15,7 +15,7 @@ class AdminLibSeeder extends Seeder
     public function run(): void
     {
         AdminLib::create([
-            'firstName' => 'Hari',
+            'firstName' => 'Hari12',
             'middleName' => 'Krishna',
             'lastName' => 'Khuju',
             'email' => 'admin@library.com',

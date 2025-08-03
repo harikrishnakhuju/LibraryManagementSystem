@@ -20,7 +20,9 @@ return new class extends Migration
             $table->unsignedInteger('edition');
             $table->unsignedInteger('noOfCopy')->default(0);
             $table->float('price');
-            $table->foreignId('publisher_id')->constrained('publishers')->onDelete('cascade');
+            $table->foreignId('publisher_id')->constrained('publishers')->nullable()->change();
+
+            $table->string('published_year')->nullable();
             $table->timestamps();
         });
     }

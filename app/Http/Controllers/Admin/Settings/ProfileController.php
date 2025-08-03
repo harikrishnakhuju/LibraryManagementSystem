@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
-use Illuminate\Contracts\Auth\MustVerifyEmail;  
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,9 +18,9 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
-        return Inertia::render('settings/profile', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => $request->session()->get('status'),    
+        return Inertia::render('admin/settings/profile', [
+            'mustVerifyEmail' => $request->user('admin') instanceof MustVerifyEmail,
+            'status' => $request->session()->get('status'),
             'guard' => 'admin',
         ]);
     }
@@ -30,11 +30,11 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $request->user('admin')->fill($request->validated());
 
-        if ($request->user('admin')->isDirty('email')) {
-            $request->user('admin')->email_verified_at = null;
-        }
+        // if ($request->user('admin')->isDirty('email')) {
+        //     $request->user('admin')->email_verified_at = null;
+        // }
 
         $request->user('admin')->save();
 
@@ -52,9 +52,9 @@ class ProfileController extends Controller
 
         $user = $request->user('admin');
 
-        Auth::logout();
+        Auth::logout('admin');
 
-        $user->delete();
+        $user->delete('admin');
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

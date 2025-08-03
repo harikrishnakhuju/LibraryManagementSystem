@@ -39,7 +39,7 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('admin/dashboard');
     })->name('admin.dashboard');
-    
+
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('admin.logout');
 
     Route::get('users', [UserManagementController::class, 'index'])->name('admin.user.index');
@@ -51,13 +51,15 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::delete('adminUsers/{librarian}', [AdminLibController::class, 'destroy'])->name('admin.librarians.destroy');
 
   
-Route::get('/books', function () {
-    $books = Book::all();
-    return Inertia::render('admin/Books/book', [
-        'books' => $books
-    ]);
-});
-    Route::post('/books',[BookController::class,'store'])->name('admin.books.store');
-    Route::put('/books/{id}',[BookController::class,'update'])->name('admin.books.update');
-    Route::delete('/books/{id}',[BookController::class,'destroy'])->name('admin.books.destroy');
+  Route::get('/books', function () {
+        $books = Book::all();
+        return Inertia::render('admin/Books/book', [
+            'books' => $books
+        ]);
+    });
+
+    // API endpoints for books
+    Route::get('/books/list', [BookController::class, 'index']); // for frontend AJAX
+    Route::post('/books/bulk', [BookController::class, 'bulkStore']); // for CSV upload
+    Route::resource('books', BookController::class)->except(['index', 'create', 'edit', 'show']);
 });
