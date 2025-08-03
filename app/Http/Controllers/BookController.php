@@ -1,95 +1,42 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Book;
-use App\Http\Requests\StoreBookRequest;
-use App\Http\Requests\UpdateBookRequest;
+use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-    public function index(){
-      return Book::all();
+    // Show all books
+    public function index()
+    {
+        return Book::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // Store a new book
+    public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreBookRequest $request)
-    {
-        $validate = $request->validate([
-            'isbn' => 'required | unique:books',
-            'title' => 'required| string | max:255',
-            'author' => 'required | string',
-            'category' => 'required | string',
-            'edition' => 'required | integer',
-            'price' => 'required | float',
-        ]);
-
-        $book = Book::create($validate);
+        $book = Book::create($request->all());
         return response()->json($book, 201);
-
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // Show a single book
     public function show($id)
     {
-        $book = Book::find($id);
-        return $book ? response()->json($book) : response()->json(['message' => 'Book not Found'], 404);
+        return Book::findOrFail($id);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
+    // Update a book
+    public function update(Request $request, $id)
     {
-        //
+        $book = Book::findOrFail($id);
+        $book->update($request->all());
+        return response()->json($book, 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateBookRequest $request, Book $id)
-    {
-        $book = Book::find($id);
-        if(!$book)
-        {
-            return response()->json(['message' => 'Book not found'], 404);
-        }
-
-        $validate = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
-            'author' => 'sometimes|required|string',
-            'edition' => 'sometimes|required|integer',
-            'price' => 'sometimes|required|float',
-        ]);
-
-        $book->update($validate);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
+    // Delete a book
     public function destroy($id)
     {
-        $book = Book::find($id);
-        if(!$book)
-        {
-            return response()->json(['message' => 'Book not found'], 404);
-        }
-
-        $book ->delete();
-        return response()->json(['message' => 'Book deleted']);
+        Book::destroy($id);
+        return response()->json(null, 204);
     }
 }

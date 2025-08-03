@@ -1,5 +1,6 @@
 <?php
 
+ use App\Models\Book;
 use App\Http\Controllers\admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\admin\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\admin\Auth\EmailVerificationNotificationController;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\AdminLibController;
+use App\Http\Controllers\BookController;
 
 Route::prefix('admin')->middleware('guest:admin')->group(function () {
     // Route::get('register', [RegisteredUserController::class, 'create'])->name('admin.register');
@@ -48,7 +50,14 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::post('adminUsers', [AdminLibController::class, 'store'])->name('admin.librarians.store');
     Route::delete('adminUsers/{librarian}', [AdminLibController::class, 'destroy'])->name('admin.librarians.destroy');
 
-    Route::get('/books', function () {
-        return Inertia::render('User/Books/book');
-    });
+  
+Route::get('/books', function () {
+    $books = Book::all();
+    return Inertia::render('admin/Books/book', [
+        'books' => $books
+    ]);
+});
+    Route::post('/books',[BookController::class,'store'])->name('admin.books.store');
+    Route::put('/books/{id}',[BookController::class,'update'])->name('admin.books.update');
+    Route::delete('/books/{id}',[BookController::class,'destroy'])->name('admin.books.destroy');
 });
