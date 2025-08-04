@@ -30,10 +30,11 @@ class BookFactory extends Factory
             'title' => fake()->sentence(3),
             'author' => fake()->name(),
             'category' => Arr::random($bookCategory),
-            'edition' =>fake()->numberBetween(1,15),
-            'noOfCopy' => fake() -> numberBetween(1, 15),
-            'price' =>fake()->numberBetween(100,1500),
+            'edition' => fake()->numberBetween(1, 15),
+            'noOfCopy' => fake()->numberBetween(1, 15),
+            'price' => fake()->numberBetween(100, 1500),
             'publisher_id' => Publisher::inRandomOrder()->first()->id,
+            'published_year' => (string)fake()->numberBetween(2000, 2025),
         ];
     }
 }
