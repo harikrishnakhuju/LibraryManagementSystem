@@ -1,6 +1,8 @@
 <?php
 
- use App\Models\Book;
+use App\Models\User;
+use App\Models\Book;
+use App\Models\Event;
 use App\Http\Controllers\admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\admin\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\admin\Auth\EmailVerificationNotificationController;
@@ -9,16 +11,14 @@ use App\Http\Controllers\admin\Auth\NewPasswordController;
 use App\Http\Controllers\admin\Auth\PasswordResetLinkController;
 use App\Http\Controllers\admin\Auth\RegisteredUserController;
 use App\Http\Controllers\admin\Auth\VerifyEmailController;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\AdminLibController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\Admin\EventController;
 
 Route::prefix('admin')->middleware('guest:admin')->group(function () {
-    // Route::get('register', [RegisteredUserController::class, 'create'])->name('admin.register');
-    // Route::post('register', [RegisteredUserController::class, 'store']);
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('admin.login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('admin.password.request');
@@ -27,8 +27,6 @@ Route::prefix('admin')->middleware('guest:admin')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])->name('admin.password.store');
 });
 
-
-
 Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)->name('admin.verification.notice');
     Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)->middleware(['signed', 'throttle:6,1'])->name('admin.verification.verify');
@@ -36,30 +34,37 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])->name('admin.password.confirm');
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
-    Route::get('dashboard', function () {
-        return Inertia::render('admin/dashboard');
-    })->name('admin.dashboard');
-
+    Route::get('dashboard', fn() => Inertia::render('admin/dashboard'))->name('admin.dashboard');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('admin.logout');
 
+    // User Management (for both page and API)
     Route::get('users', [UserManagementController::class, 'index'])->name('admin.user.index');
-    Route::post('users', [UserManagementController::class, 'store'])->name('admin.user.store');
-    Route::delete('users/{user}', [UserManagementController::class, 'destroy'])->name('admin.user.destroy');
+    Route::post('users/bulk', [UserManagementController::class, 'bulkStore'])->name('admin.user.bulkStore');
+    Route::put('users/{id}', [UserManagementController::class, 'update'])->name('admin.user.update');
+    Route::delete('users/{id}', [UserManagementController::class, 'destroy'])->name('admin.user.destroy');
+    Route::get('users/list', [UserManagementController::class, 'index']); // API for React
 
+    //Event Management
+     Route::get('events', function () {
+        $events = Event::all();
+        return Inertia::render('admin/Event/event', ['events' => $events]);
+    });
+    Route::post('events/notify', [EventController::class, 'sendNotification'])->name('admin.event.notify');
+    // Librarian Management
     Route::get('adminUsers', [AdminLibController::class, 'index'])->name('admin.librarians.index');
     Route::post('adminUsers', [AdminLibController::class, 'store'])->name('admin.librarians.store');
     Route::delete('adminUsers/{librarian}', [AdminLibController::class, 'destroy'])->name('admin.librarians.destroy');
 
-  
-  Route::get('/books', function () {
-        $books = Book::all();
-        return Inertia::render('admin/Books/book', [
-            'books' => $books
-        ]);
+    // Book Management
+    Route::get('users', function () {
+        $users = User::all();
+        return Inertia::render('admin/Users/user', ['users' => $users]);
     });
-
-    // API endpoints for books
-    Route::get('/books/list', [BookController::class, 'index']); // for frontend AJAX
-    Route::post('/books/bulk', [BookController::class, 'bulkStore']); // for CSV upload
+    Route::get('books', function () {
+        $books = Book::all();
+        return Inertia::render('admin/Books/book', ['books' => $books]);
+    });
+    Route::get('books/list', [BookController::class, 'index']);
+    Route::post('books/bulk', [BookController::class, 'bulkStore']);
     Route::resource('books', BookController::class)->except(['index', 'create', 'edit', 'show']);
 });
