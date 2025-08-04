@@ -1,8 +1,5 @@
 <?php
 
-use App\Models\User;
-use App\Models\Book;
-use App\Models\Event;
 use App\Http\Controllers\admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\admin\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\admin\Auth\EmailVerificationNotificationController;
@@ -11,12 +8,17 @@ use App\Http\Controllers\admin\Auth\NewPasswordController;
 use App\Http\Controllers\admin\Auth\PasswordResetLinkController;
 use App\Http\Controllers\admin\Auth\RegisteredUserController;
 use App\Http\Controllers\admin\Auth\VerifyEmailController;
-use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\AdminLibController;
+use App\Http\Controllers\AdminStatsController;
 use App\Http\Controllers\BookController;
-use App\Http\Controllers\Admin\EventController;
+use App\Models\Book;
+use App\Models\Event;
+use App\Models\User;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
+
 
 Route::prefix('admin')->middleware('guest:admin')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('admin.login');
@@ -67,4 +69,5 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::get('books/list', [BookController::class, 'index']);
     Route::post('books/bulk', [BookController::class, 'bulkStore']);
     Route::resource('books', BookController::class)->except(['index', 'create', 'edit', 'show']);
+    Route::get('/dashboard-stats', [AdminStatsController::class, 'index']);
 });

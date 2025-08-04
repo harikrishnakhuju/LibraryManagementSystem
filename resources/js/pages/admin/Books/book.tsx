@@ -261,7 +261,6 @@ const BookIndex = () => {
                                 <th className="p-2 border">Edition</th>
                                 <th className="p-2 border">No. of Copy</th>
                                 <th className="p-2 border">Price</th>
-                                <th className="p-2 border">Publisher ID</th>
                                 <th className="p-2 border">Published Year</th>
                                 <th className="p-2 border">Actions</th>
                             </tr>

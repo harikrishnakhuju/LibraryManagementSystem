@@ -1,5 +1,5 @@
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
@@ -11,41 +11,48 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const mockStats = {
-    totalBooks: 320,
-    totalUsers: 135, // students + staff
-    totalStudents: 120,
-    totalStaff: 15,
-    borrowedBooks: 48,
-    returnedBooks: 272,
-    overdueBooks: 6,
-};
-
-// Monthly data for line chart (sum of borrowed + returned)
-const monthlyActivity = {
-    labels: [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ],
-    borrowed: [12, 18, 22, 19, 25, 30, 28, 24, 20, 18, 15, 14],
-    returned: [10, 15, 20, 17, 22, 27, 25, 22, 18, 16, 13, 12],
-};
-
 export default function Dashboard() {
     const pieChartRef = useRef<HTMLCanvasElement>(null);
-    const lineChartRef = useRef<HTMLCanvasElement>(null);
+    const lineChartRef = useRef<HTMLCanvasElement>(null)
+    const pieChartInstance = useRef<any>(null); // For pie chart
+    const lineChartInstance = useRef<any>(null); // For line chart
+
+    const [stats, setStats] = useState({
+        totalBooks: 0,
+        totalUsers: 0,
+        borrowedBooks: 0,
+        returnedBooks: 0,
+        overdueBooks: 0,
+        monthlyActivity: {
+            labels: [],
+            borrowed: [],
+            returned: [],
+        },
+    });
+
+    useEffect(() => {
+        fetch('/admin/dashboard-stats')
+            .then(res => res.json())
+            .then(data => {
+                setStats(data);
+            });
+    }, []);
 
     useEffect(() => {
         import('chart.js/auto').then((Chart) => {
+            // // Destroy previous pie chart if exists
+            if (pieChartInstance.current) {
+                pieChartInstance.current.destroy();
+            }
             // Pie Chart: Borrowed vs Returned
             if (pieChartRef.current) {
-                new Chart.default(pieChartRef.current, {
+                pieChartInstance.current = new Chart.default(pieChartRef.current, {
                     type: 'pie',
                     data: {
                         labels: ['Borrowed Books', 'Returned Books'],
                         datasets: [
                             {
-                                data: [mockStats.borrowedBooks, mockStats.returnedBooks],
+                                data: [stats.borrowedBooks, stats.returnedBooks],
                                 backgroundColor: ['#2563eb', '#f59e42'],
                                 borderColor: ['#fff', '#fff'],
                                 borderWidth: 2,
@@ -73,19 +80,20 @@ export default function Dashboard() {
                     },
                 });
             }
-            // Line Chart: Book Transactions (borrowed + returned)
+
+            // Destroy previous line chart if exists
+            if (lineChartInstance.current) {
+                lineChartInstance.current.destroy();
+            }
             if (lineChartRef.current) {
-                const transactionData = monthlyActivity.borrowed.map(
-                    (b, i) => b + monthlyActivity.returned[i]
-                );
-                new Chart.default(lineChartRef.current, {
+                lineChartInstance.current = new Chart.default(lineChartRef.current, {
                     type: 'line',
                     data: {
-                        labels: monthlyActivity.labels,
+                        labels: stats.monthlyActivity.labels,
                         datasets: [
                             {
-                                label: 'Book Transactions',
-                                data: transactionData,
+                                label: 'Borrowed',
+                                data: stats.monthlyActivity.borrowed,
                                 borderColor: '#2563eb',
                                 backgroundColor: 'rgba(37,99,235,0.08)',
                                 tension: 0.4,
@@ -93,10 +101,21 @@ export default function Dashboard() {
                                 pointRadius: 4,
                                 pointBackgroundColor: '#2563eb',
                             },
+                            {
+                                label: 'Returned',
+                                data: stats.monthlyActivity.returned,
+                                borderColor: '#f59e42',
+                                backgroundColor: 'rgba(245,158,66,0.08)',
+                                tension: 0.4,
+                                fill: true,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#f59e42',
+                            },
                         ],
                     },
                     options: {
                         responsive: true,
+                        aspectRatio: 2.5,
                         plugins: {
                             legend: {
                                 display: true,
@@ -121,7 +140,7 @@ export default function Dashboard() {
                             },
                             y: {
                                 beginAtZero: true,
-                                ticks: { color: '#64748b', font: { family: 'Inter, sans-serif' } },
+                                ticks: { color: '#64748b', font: { family: 'Inter, sans-serif' }, stepSize: 1 },
                                 grid: { color: '#e5e7eb' },
                             },
                         },
@@ -129,7 +148,7 @@ export default function Dashboard() {
                 });
             }
         });
-    }, []);
+    }, [stats]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -141,28 +160,28 @@ export default function Dashboard() {
                 <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
                     <DashboardCard
                         title="Total Books"
-                        value={mockStats.totalBooks}
+                        value={stats.totalBooks}
                         link="/books"
                         color="from-blue-700 to-blue-400"
                         icon="📘"
                     />
                     <DashboardCard
                         title="Total Users"
-                        value={mockStats.totalUsers}
+                        value={stats.totalUsers}
                         link="/users"
                         color="from-green-700 to-green-400"
                         icon="👥"
                     />
                     <DashboardCard
                         title="Borrowed Books"
-                        value={mockStats.borrowedBooks}
+                        value={stats.borrowedBooks}
                         link="/catalog/borrowed"
                         color="from-slate-800 to-blue-600"
                         icon="📖"
                     />
                     <DashboardCard
                         title="Overdue Books"
-                        value={mockStats.overdueBooks}
+                        value={stats.overdueBooks}
                         link="/catalog/overdue"
                         color="from-red-700 to-red-400"
                         icon="⏰"

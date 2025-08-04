@@ -7,43 +7,63 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: '/dashboard' },
 ];
 
-const mockStats = {
-    borrowedBooks: 5,
-    returnedBooks: 272,
-    overdueBooks: 2,
+type BorrowedBook = {
+    transaction_id: number;
+    book_title: string;
+    dueDate: string; // or reserveDate if that's what your backend sends
 };
 
-const borrowedBooksList = [
-    { id: 1, title: 'The Great Gatsby', dueDate: '2025-08-10' },
-    { id: 2, title: '1984', dueDate: '2025-08-12' },
-    // ...add more as needed
-];
+type ReturnedBook = {
+    transaction_id: number;
+    book_title: string;
+    returnedDate: string; // or reserveDate if that's what your backend sends
+};
 
-const returnedBooksList = [
-    { id: 1, title: 'To Kill a Mockingbird', returnedDate: '2025-08-01' },
-    { id: 2, title: 'Moby Dick', returnedDate: '2025-08-02' },
-    // ...add more as needed
-];
-
-const overdueBooksList = [
-    { id: 1, title: 'Pride and Prejudice', dueDate: '2025-07-30' },
-    { id: 2, title: 'Hamlet', dueDate: '2025-07-28' },
-    // ...add more as needed
-];
-
-// Only borrowed and returned for user activity
-const monthlyActivity = {
-    labels: [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ],
-    borrowed: [2, 5, 8, 6, 7, 10, 12, 9, 8, 7, 6, 5],
-    returned: [1, 4, 7, 5, 6, 9, 11, 8, 7, 6, 5, 4],
+type OverdueBook = {
+    transaction_id: number;
+    book_title: string;
+    dueDate: string; // or reserveDate if that's what your backend sends
 };
 
 export default function Dashboard() {
     const pieChartRef = useRef<HTMLCanvasElement>(null);
     const lineChartRef = useRef<HTMLCanvasElement>(null);
+    const pieChartInstance = useRef<any>(null); // For pie chart
+    const lineChartInstance = useRef<any>(null); // For line chart
+
+
+    const [stats, setStats] = useState({
+        borrowedBooks: 0,
+        returnedBooks: 0,
+        overdueBooks: 0,
+    });
+
+    const [borrowedBooksList, setBorrowedBooksList] = useState<BorrowedBook[]>([]);
+    const [returnedBooksList, setReturnedBooksList] = useState<ReturnedBook[]>([]);
+    const [overdueBooksList, setOverdueBooksList] = useState<OverdueBook[]>([]);
+    const [monthlyActivity, setMonthlyActivity] = useState({
+        labels: [],
+        borrowed: [],
+        returned: [],
+    });
+
+    useEffect(() => {
+        fetch('/user/dashboard-stats')
+            .then(res => res.json())
+            .then(data => {
+                console.log('Dashboard stats:', data)
+                setStats({
+                    borrowedBooks: data.borrowedBooksCount ?? 0,
+                    returnedBooks: data.returnedBooksCount ?? 0,
+                    overdueBooks: data.overdueBooksCount ?? 0,
+                });
+                setBorrowedBooksList(data.borrowedBooksList || []);
+                setReturnedBooksList(data.returnedBooksList || []);
+                setOverdueBooksList(data.overdueBooksList || []);
+                setMonthlyActivity(data.monthlyActivity || { labels: [], borrowed: [], returned: [] });
+            });
+    }, []);
+
 
     const [showBorrowed, setShowBorrowed] = useState(false);
     const [showReturned, setShowReturned] = useState(false);
@@ -51,18 +71,22 @@ export default function Dashboard() {
 
     useEffect(() => {
         import('chart.js/auto').then((Chart) => {
+            // // Destroy previous pie chart if exists
+            if (pieChartInstance.current) {
+                pieChartInstance.current.destroy();
+            }
             // Pie Chart
             if (pieChartRef.current) {
-                new Chart.default(pieChartRef.current, {
+                pieChartInstance.current = new Chart.default(pieChartRef.current, {
                     type: 'pie',
                     data: {
                         labels: ['Borrowed Books', 'Returned Books', 'Overdue Books'],
                         datasets: [
                             {
                                 data: [
-                                    mockStats.borrowedBooks,
-                                    mockStats.returnedBooks,
-                                    mockStats.overdueBooks,
+                                    stats.borrowedBooks,
+                                    stats.returnedBooks,
+                                    stats.overdueBooks,
                                 ],
                                 backgroundColor: [
                                     '#1e293b', // dark blue
@@ -99,9 +123,14 @@ export default function Dashboard() {
                     },
                 });
             }
+
+            // Destroy previous line chart if exists
+            if (lineChartInstance.current) {
+                lineChartInstance.current.destroy();
+            }
             // Line Chart (only borrowed and returned)
             if (lineChartRef.current) {
-                new Chart.default(lineChartRef.current, {
+                lineChartInstance.current = new Chart.default(lineChartRef.current, {
                     type: 'line',
                     data: {
                         labels: monthlyActivity.labels,
@@ -130,6 +159,7 @@ export default function Dashboard() {
                     },
                     options: {
                         responsive: true,
+                        aspectRatio: 2.5,
                         plugins: {
                             legend: {
                                 display: true,
@@ -154,7 +184,7 @@ export default function Dashboard() {
                             },
                             y: {
                                 beginAtZero: true,
-                                ticks: { color: '#64748b', font: { family: 'Inter, sans-serif' } },
+                                ticks: { color: '#64748b', font: { family: 'Inter, sans-serif' }, stepSize: 1 },
                                 grid: { color: '#e5e7eb' },
                             },
                         },
@@ -162,7 +192,7 @@ export default function Dashboard() {
                 });
             }
         });
-    }, []);
+    }, [monthlyActivity]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -174,9 +204,9 @@ export default function Dashboard() {
 
                 {/* Stats Cards */}
                 <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-                    <DashboardCard title="Borrowed Books" value={mockStats.borrowedBooks} link="/catalog/borrowed" color="from-slate-800 to-blue-600" />
-                    <DashboardCard title="Returned Books" value={mockStats.returnedBooks} link="/catalog/returned" color="from-orange-600 to-yellow-400" />
-                    <DashboardCard title="Overdue Books" value={mockStats.overdueBooks} link="/catalog/overdue" color="from-red-700 to-red-400" />
+                    <DashboardCard title="Borrowed Books" value={stats.borrowedBooks} link="/catalog/borrowed-books" color="from-slate-800 to-blue-600" />
+                    <DashboardCard title="Returned Books" value={stats.returnedBooks} link="/catalog/returned-books" color="from-orange-600 to-yellow-400" />
+                    <DashboardCard title="Overdue Books" value={stats.overdueBooks} link="/catalog/overdue-borrowers" color="from-red-700 to-red-400" />
                 </div>
 
                 {/* Main Content: 3/4 Line Graph, 1/4 Pie + Dropdowns */}
@@ -195,39 +225,39 @@ export default function Dashboard() {
                         {/* Borrowed Books Toggle */}
                         <DropdownList
                             title="Borrowed Books"
-                            count={mockStats.borrowedBooks}
+                            count={stats.borrowedBooks}
                             show={showBorrowed}
                             setShow={setShowBorrowed}
                             color="blue"
                             items={borrowedBooksList.map(book => ({
-                                id: book.id,
-                                label: book.title,
+                                id: book.transaction_id,
+                                label: book.book_title,
                                 meta: `Due: ${book.dueDate}`,
                             }))}
                         />
                         {/* Returned Books Toggle */}
                         <DropdownList
                             title="Returned Books"
-                            count={mockStats.returnedBooks}
+                            count={stats.returnedBooks}
                             show={showReturned}
                             setShow={setShowReturned}
                             color="orange"
                             items={returnedBooksList.map(book => ({
-                                id: book.id,
-                                label: book.title,
+                                id: book.transaction_id,
+                                label: book.book_title,
                                 meta: `Returned: ${book.returnedDate}`,
                             }))}
                         />
                         {/* Overdue Books Toggle */}
                         <DropdownList
                             title="Overdue Books"
-                            count={mockStats.overdueBooks}
+                            count={stats.overdueBooks}
                             show={showOverdue}
                             setShow={setShowOverdue}
                             color="red"
                             items={overdueBooksList.map(book => ({
-                                id: book.id,
-                                label: book.title,
+                                id: book.transaction_id,
+                                label: book.book_title,
                                 meta: `Due: ${book.dueDate}`,
                             }))}
                         />
