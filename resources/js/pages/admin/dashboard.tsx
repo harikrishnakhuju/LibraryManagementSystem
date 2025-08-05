@@ -14,8 +14,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function Dashboard() {
     const pieChartRef = useRef<HTMLCanvasElement>(null);
     const lineChartRef = useRef<HTMLCanvasElement>(null)
-    const pieChartInstance = useRef<any>(null); // For pie chart
-    const lineChartInstance = useRef<any>(null); // For line chart
+    const pieChartInstance = useRef<any>(null);
+    const lineChartInstance = useRef<any>(null);
 
     const [stats, setStats] = useState({
         totalBooks: 0,
@@ -28,6 +28,8 @@ export default function Dashboard() {
             borrowed: [],
             returned: [],
         },
+        issuedBooks: 0,   // <-- Added
+        returnedToday: 0, // <-- Added
     });
 
     useEffect(() => {
@@ -40,11 +42,9 @@ export default function Dashboard() {
 
     useEffect(() => {
         import('chart.js/auto').then((Chart) => {
-            // // Destroy previous pie chart if exists
             if (pieChartInstance.current) {
                 pieChartInstance.current.destroy();
             }
-            // Pie Chart: Borrowed vs Returned
             if (pieChartRef.current) {
                 pieChartInstance.current = new Chart.default(pieChartRef.current, {
                     type: 'pie',
@@ -81,7 +81,6 @@ export default function Dashboard() {
                 });
             }
 
-            // Destroy previous line chart if exists
             if (lineChartInstance.current) {
                 lineChartInstance.current.destroy();
             }
@@ -157,7 +156,7 @@ export default function Dashboard() {
                 <h1 className="text-3xl font-bold mb-6 text-blue-900 dark:text-orange-300 tracking-tight">📚 Library Admin Dashboard</h1>
 
                 {/* Stats Cards */}
-                <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+                <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-6">
                     <DashboardCard
                         title="Total Books"
                         value={stats.totalBooks}
@@ -185,6 +184,20 @@ export default function Dashboard() {
                         link="/admin/catalog/overdue-borrowers"
                         color="from-red-700 to-red-400"
                         icon="⏰"
+                    />
+                    <DashboardCard
+                        title="Issue Book"
+                        value={stats.issuedBooks}
+                        link="/admin/issue-book"
+                        color="from-indigo-700 to-indigo-400"
+                        icon="📝"
+                    />
+                    <DashboardCard
+                        title="Return Book"
+                        value={stats.returnedToday}
+                        link="/admin/return-book"
+                        color="from-green-700 to-green-400"
+                        icon="🔄"
                     />
                 </div>
 
@@ -258,6 +271,16 @@ function QuickActionCard() {
                 <li>
                     <Link href="/catalog/borrowed" className="text-blue-600 hover:underline">
                         📚 View Borrowed Books
+                    </Link>
+                </li>
+                <li>
+                    <Link href="/admin/issue-book" className="text-indigo-600 hover:underline">
+                        📝 Issue Book
+                    </Link>
+                </li>
+                <li>
+                    <Link href="/admin/return-book" className="text-green-600 hover:underline">
+                        🔄 Return Book
                     </Link>
                 </li>
             </ul>
