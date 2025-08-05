@@ -63,4 +63,21 @@ class BookTransactionController extends Controller
     {
         //
     }
+
+    public function returnBook($bookId, $userId)
+{
+    $borrowTransaction = BookTransaction::where('book_id', $bookId)
+        ->where('user_id', $userId)
+        ->whereNull('return_date')
+        ->latest('created_at') // or borrow_date
+        ->first();
+
+    if ($borrowTransaction) {
+        $borrowTransaction->return_date = now();
+        $borrowTransaction->save();
+        return response()->json(['message' => 'Book returned successfully']);
+    }
+
+    return response()->json(['error' => 'No active borrow found'], 404);
+}
 }

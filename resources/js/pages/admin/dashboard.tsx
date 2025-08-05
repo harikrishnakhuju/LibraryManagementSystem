@@ -161,28 +161,28 @@ export default function Dashboard() {
                     <DashboardCard
                         title="Total Books"
                         value={stats.totalBooks}
-                        link="/books"
+                        link="/admin/books"
                         color="from-blue-700 to-blue-400"
                         icon="📘"
                     />
                     <DashboardCard
                         title="Total Users"
                         value={stats.totalUsers}
-                        link="/users"
+                        link="/admin/users"
                         color="from-green-700 to-green-400"
                         icon="👥"
                     />
                     <DashboardCard
                         title="Borrowed Books"
                         value={stats.borrowedBooks}
-                        link="/catalog/borrowed"
+                        link="/admin/catalog/borrowed-books"
                         color="from-slate-800 to-blue-600"
                         icon="📖"
                     />
                     <DashboardCard
                         title="Overdue Books"
                         value={stats.overdueBooks}
-                        link="/catalog/overdue"
+                        link="/admin/catalog/overdue-borrowers"
                         color="from-red-700 to-red-400"
                         icon="⏰"
                     />

@@ -31,6 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/catalog/borrowed-books', function () {
         return Inertia::render('User/Catalogs/borrowedbook');
     });
+    
     Route::get('/user/dashboard-stats', [UserStatsController::class, 'index']);
 
 });

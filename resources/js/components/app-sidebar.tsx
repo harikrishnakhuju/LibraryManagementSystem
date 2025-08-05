@@ -55,6 +55,11 @@ export function AppSidebar() {
                 icon: User,
             },
              {
+                title: 'Librarians',
+                href: '/admin/adminUsers',
+                icon: User,
+            },
+             {
                 title: 'Events',
                 href: '/admin/events',
                 icon: User,

@@ -37,6 +37,9 @@ class UserManagementController extends Controller
     public function bulkStore(Request $request)
 {
     $users = $request->input('users', []);
+    if (!is_array($users)) {
+        $users = [$users]; // convert single user object into array
+    }
     $created = [];
     foreach ($users as $data) {
         $validated = validator($data, [

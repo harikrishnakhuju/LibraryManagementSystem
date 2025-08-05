@@ -16,6 +16,7 @@ use App\Http\Controllers\BookController;
 use App\Models\Book;
 use App\Models\Event;
 use App\Models\User;
+use App\Models\AdminLib;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -41,6 +42,7 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
 
     // User Management (for both page and API)
     Route::get('users', [UserManagementController::class, 'index'])->name('admin.user.index');
+    Route::post('users', [UserManagementController::class, 'store'])->name('admin.user.store');
     Route::post('users/bulk', [UserManagementController::class, 'bulkStore'])->name('admin.user.bulkStore');
     Route::put('users/{id}', [UserManagementController::class, 'update'])->name('admin.user.update');
     Route::delete('users/{id}', [UserManagementController::class, 'destroy'])->name('admin.user.destroy');
@@ -52,10 +54,18 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
         return Inertia::render('admin/Event/event', ['events' => $events]);
     });
     Route::post('events/notify', [EventController::class, 'sendNotification'])->name('admin.event.notify');
+
     // Librarian Management
-    Route::get('adminUsers', [AdminLibController::class, 'index'])->name('admin.librarians.index');
-    Route::post('adminUsers', [AdminLibController::class, 'store'])->name('admin.librarians.store');
-    Route::delete('adminUsers/{librarian}', [AdminLibController::class, 'destroy'])->name('admin.librarians.destroy');
+    Route::get('adminUsers', [AdminLibController::class, 'index'])->name('admin.librarian.index');
+    Route::post('adminUsers', [AdminLibController::class, 'store'])->name('admin.librarian.store');
+    Route::post('adminUsers/bulk', [AdminLibController::class, 'bulkStore'])->name('admin.librarian.bulkStore');
+    Route::put('adminUsers/{id}', [AdminLibController::class, 'update'])->name('admin.librarian.update');
+    Route::delete('adminUsers/{id}', [AdminLibController::class, 'destroy'])->name('admin.librarian.destroy');
+    Route::get('adminUsers/list', [AdminLibController::class, 'index']);
+    Route::get('adminUsers', function(){
+        $users = AdminLib::all();
+        return Inertia::render('admin/Librarian/librarian',['users' => $users]);
+    });
 
     // Book Management
     Route::get('users', function () {
@@ -70,4 +80,14 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::post('books/bulk', [BookController::class, 'bulkStore']);
     Route::resource('books', BookController::class)->except(['index', 'create', 'edit', 'show']);
     Route::get('/dashboard-stats', [AdminStatsController::class, 'index']);
+
+
+    //Catalog
+    Route::get('/catalog/overdue-borrowers', function () {
+        return Inertia::render('admin/Catalogs/overdueborrower');
+    });
+
+    Route::get('/catalog/borrowed-books', function () {
+        return Inertia::render('admin/Catalogs/borrowedbook');
+    });
 });

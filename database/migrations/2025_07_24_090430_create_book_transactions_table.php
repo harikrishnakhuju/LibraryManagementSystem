@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('book_copy_id')->constrained('book_copies')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->date('reserveDate')->nullable();
+            $table->date('issueDate')->nullable();
             $table->date('returnDate')->nullable();
-            $table->enum('status', ['reserved', 'borrowed', 'returned', 'cancelled'])->default('reserved');
+            $table->date('dueDate')->nullable();
+            $table->boolean('isOverdue')->default(false);
+            $table->foreignId('admin_id')->nullable()->constrained('admin_libs')->onDelete('set null'); // Admin handling the transaction   
             $table->decimal('late_fee', 8, 2)->default(0);
             $table->boolean('is_damaged')->default(false);
             $table->boolean('is_lost')->default(false);

@@ -21,7 +21,7 @@ class UserStatsController extends Controller
         // Group by status
         $borrowedBooks = [];
         $returnedBooks = [];
-        $reservedBooks = [];
+        // $reservedBooks = [];
 
         foreach ($transactions as $tx) {
             $book = $tx->bookCopy->book ?? null;
@@ -29,17 +29,17 @@ class UserStatsController extends Controller
                 'transaction_id' => $tx->id,
                 'book_title' => $book->title ?? 'Unknown',
                 'barcode' => $tx->bookCopy->barcode ?? 'Unknown',
-                'status' => $tx->status,
-                'created_at' => $tx->created_at ? $tx->created_at->format('Y-m-d') : null,
+                'status' => null,
+                'isOverdue' => $tx->isOverdue,
+                'issueDate' => $tx->issueDate,
                 'returnDate' => $tx->returnDate,
-                'reserveDate' => $tx->reserveDate,
             ];
-            if ($tx->status === 'borrowed') {
+            if ($tx->issueDate && !$tx->returnDate) {
+                $borrowedBooks['status'] = 'borrowed';
                 $borrowedBooks[] = $bookInfo;
-            } elseif ($tx->status === 'returned') {
+            } elseif ($tx->returnDate) {
+                $bookInfo['status'] = $tx->isOverdue ? 'returned (overdue)' : 'returned';
                 $returnedBooks[] = $bookInfo;
-            } elseif ($tx->status === 'reserved') {
-                $reservedBooks[] = $bookInfo;
             }
         }
 
@@ -48,23 +48,25 @@ class UserStatsController extends Controller
         $borrowed = array_fill(0, 12, 0);
         $returned = array_fill(0, 12, 0);
 
-        $borrowedMonthly = BookTransaction::selectRaw('MONTH(reserveDate) as month, COUNT(*) as count')
+        $borrowedMonthly = BookTransaction::selectRaw('MONTH(issueDate) as month, COUNT(*) as count')
             ->where('user_id', $userId)
-            ->whereYear('reserveDate', now()->year)
-            ->where('status', 'borrowed')
+            ->whereYear('issueDate', now()->year)
+            ->whereNotNull('issueDate')
+            ->whereNull('returnDate')
             ->groupBy('month')
             ->pluck('count', 'month');
 
         $returnedMonthly = BookTransaction::selectRaw('MONTH(returnDate) as month, COUNT(*) as count')
             ->where('user_id', $userId)
             ->whereYear('returnDate', now()->year)
-            ->where('status', 'returned')
+            ->whereNotNull('issueDate')
+            ->whereNotNull('returnDate')
             ->groupBy('month')
             ->pluck('count', 'month');
 
         // Get overdue books
         $overdueBooks = BookTransaction::where('user_id', $userId)
-            ->where('status', 'borrowed')
+            ->where('isOverdue',true)
             ->where('returnDate', '<', now())
             ->with(['bookCopy.book'])
             ->get();

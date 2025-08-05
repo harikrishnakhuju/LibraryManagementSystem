@@ -14,24 +14,30 @@ class AdminStatsController extends Controller
         // Fetch statistics from the database or any other source
         $totalUsers = User::count();
         $totalBooks = BookCopy::count();
-        $borrowedBooks = BookTransaction::where('status', 'borrowed')->count();
-        $returnedBooks = BookTransaction::where('status', 'returned')->count();
-        $overdueBooks = BookTransaction::where('status', 'reserved')->count();
+        // Total borrowed books (currently borrowed)
+        $borrowedBooks = BookTransaction::whereNull('returnDate')->whereNotNull('issueDate')->count();
 
-        $monthly = BookTransaction::selectRaw('MONTH(created_at) as month, COUNT(*) as borrowed')
-            ->whereYear('created_at', now()->year)
-            ->where('status', 'borrowed')
+        // Total returned books
+        $returnedBooks = BookTransaction::whereNotNull('returnDate')->count();
+
+        // Total overdue books
+        $overdueBooks = BookTransaction::where('isOverdue', true)->count();
+        // $borrowedBooks = BookTransaction::where('transactionType', 'borrow')->count();
+        // $returnedBooks = BookTransaction::where('transactionType', 'return')->count();
+        // $overdueBooks = BookTransaction::where('transactionType', 'overdue')->count();
+
+        $monthly = BookTransaction::selectRaw('MONTH(issueDate) as month, COUNT(*) as borrowed')
+            ->whereYear('issueDate', now()->year)
             ->groupBy('month')
             ->pluck('borrowed', 'month');
 
 
-        $returned = BookTransaction::selectRaw('MONTH(created_at) as month, COUNT(*) as returned')
-            ->whereYear('created_at', now()->year)
-            ->where('status', 'returned')
+        $returned = BookTransaction::selectRaw('MONTH(returnDate) as month, COUNT(*) as returned')
+            ->whereYear('returnDate', now()->year)
             ->groupBy('month')
             ->pluck('returned', 'month');
 
-        $labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        $labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         $borrowedArr = [];
         $returnedArr = [];
         for ($i = 1; $i <= 12; $i++) {

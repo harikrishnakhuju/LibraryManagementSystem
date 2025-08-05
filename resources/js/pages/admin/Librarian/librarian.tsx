@@ -3,7 +3,7 @@ import axios from 'axios';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 
-type User = {
+type adminUser = {
     id: number;
     firstName: string;
     middleName?: string;
@@ -12,25 +12,23 @@ type User = {
     address: string;
     phone: string;
     role: string;
-    borrowLimit?: number;
 };
 
 type ModalType = 'add' | 'edit' | 'csv' | null;
 
 const UserIndex = () => {
-    const [users, setUsers] = useState<User[]>([]);
+    const [users, setUsers] = useState<adminUser[]>([]);
     const [loading, setLoading] = useState(true);
     const [modalType, setModalType] = useState<ModalType>(null);
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
-    const [formData, setFormData] = useState<Omit<User, 'id'> & { password?: string }>({
+    const [selectedUser, setSelectedUser] = useState<adminUser | null>(null);
+    const [formData, setFormData] = useState<Omit<adminUser, 'id'> & { password?: string }>({
         firstName: '',
         middleName: '',
         lastName: '',
         email: '',
         address: '',
         phone: '',
-        role: 'student',
-        borrowLimit: 5,
+        role: 'librarian',
         password: '',
     });
     const [csvError, setCsvError] = useState<string | null>(null);
@@ -40,7 +38,7 @@ const UserIndex = () => {
     // Fetch users
     const fetchUsers = () => {
         setLoading(true);
-        axios.get<User[]>('/admin/users/list')
+        axios.get<adminUser[]>('/admin/adminUsers/list')
             .then(res => setUsers(res.data))
             .finally(() => setLoading(false));
     };
@@ -49,8 +47,8 @@ const UserIndex = () => {
 
     useEffect(() => {
         if (modalType === 'edit' && selectedUser) {
-            const { firstName, middleName, lastName, email, address, phone, role, borrowLimit } = selectedUser;
-            setFormData({ firstName, middleName: middleName || '', lastName, email, address, phone, role, borrowLimit: borrowLimit ?? 5, password: '' });
+            const { firstName, middleName, lastName, email, address, phone, role } = selectedUser;
+            setFormData({ firstName, middleName: middleName || '', lastName, email, address, phone, role, password: '' });
         }
 
         if (modalType === 'add') {
@@ -61,33 +59,32 @@ const UserIndex = () => {
                 email: '',
                 address: '',
                 phone: '',
-                role: 'student',
-                borrowLimit: 5,
+                role: 'librarian',
                 password: '',
             });
         }
 
     }, [modalType, selectedUser]);
 
-const handleAddUser = async () => {
-    const data = { ...formData };
-    if (!data.password) delete data.password;
-        const res = await axios.post('/admin/users', data);
+    const handleAddUser = async () => {
+        const data = { ...formData };
+        if (!data.password) delete data.password;
+        const res = await axios.post('/admin/adminUsers', data);
         console.log('User added:', res.data);
         fetchUsers();
         handleCloseModal();
-};
+    };
 
     const handleEditUser = async () => {
         if (!selectedUser) return;
         const data = { ...formData };
         if (!data.password) delete data.password;
-        await axios.put(`/admin/users/${selectedUser.id}`, data);
+        await axios.put(`/admin/adminUsers/${selectedUser.id}`, data);
         fetchUsers();
         handleCloseModal();
     };
 
-    const handleOpenModal = (type: ModalType, user?: User) => {
+    const handleOpenModal = (type: ModalType, user?: adminUser) => {
         setSelectedUser(user || null);
         setModalType(type);
         setCsvError(null);
@@ -98,7 +95,7 @@ const handleAddUser = async () => {
         setSelectedUser(null);
         setFormData({
             firstName: '', middleName: '', lastName: '', email: '', address: '',
-            phone: '', role: 'student', borrowLimit: 5, password: '',
+            phone: '', role: 'librarian', password: '',
         });
         setCsvError(null);
         setDragActive(false);
@@ -123,7 +120,7 @@ const handleAddUser = async () => {
             }
             const header = rows[0].split(',').map(h => h.trim());
             const allowed = [
-                'firstName', 'middleName', 'lastName', 'email', 'address', 'phone', 'role', 'borrowLimit', 'password'
+                'firstName', 'middleName', 'lastName', 'email', 'address', 'phone', 'role', 'password'
             ];
             const headerLower = header.map(h => h.toLowerCase());
             const required = ['firstName', 'lastName', 'email', 'address', 'phone', 'role', 'password'];
@@ -150,7 +147,6 @@ const handleAddUser = async () => {
                         address: user['address'],
                         phone: user['phone'],
                         role: user['role'],
-                        borrowLimit: user['borrowLimit'] ? Number(user['borrowLimit']) : 5,
                         password: user['password'],
                     });
                 }
@@ -160,7 +156,7 @@ const handleAddUser = async () => {
                 return;
             }
             try {
-                await axios.post('/admin/users/bulk', { users: validRows });
+                await axios.post('/admin/adminUsers/bulk', { users: validRows });
                 fetchUsers();
                 handleCloseModal();
             } catch (err: any) {
@@ -200,7 +196,7 @@ const handleAddUser = async () => {
     };
 
     const handleDeleteUser = async (id: number) => {
-        await axios.delete(`/admin/users/${id}`);
+        await axios.delete(`/admin/adminUsers/${id}`);
         fetchUsers();
     };
 
@@ -209,7 +205,7 @@ const handleAddUser = async () => {
             <Head title="Users" />
             <div className="p-4">
                 <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-2xl font-bold">Users</h1>
+                    <h1 className="text-2xl font-bold">AdminUser</h1>
                     <button
                         onClick={() => handleOpenModal('csv')}
                         className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
@@ -220,7 +216,7 @@ const handleAddUser = async () => {
                         onClick={() => handleOpenModal('add')}
                         className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
                     >
-                        Add User
+                        Add Admin/Librarian
                     </button>
                 </div>
                 {loading ? (
@@ -236,7 +232,6 @@ const handleAddUser = async () => {
                                 <th className="p-2 border">Address</th>
                                 <th className="p-2 border">Phone</th>
                                 <th className="p-2 border">Role</th>
-                                <th className="p-2 border">Borrow Limit</th>
                                 <th className="p-2 border">Actions</th>
                             </tr>
                         </thead>
@@ -250,7 +245,6 @@ const handleAddUser = async () => {
                                     <td className="p-2 border">{user.address}</td>
                                     <td className="p-2 border">{user.phone}</td>
                                     <td className="p-2 border">{user.role}</td>
-                                    <td className="p-2 border">{user.borrowLimit}</td>
                                     <td className="p-2 border">
                                         <button
                                             onClick={() => handleOpenModal('edit', user)}
@@ -277,7 +271,7 @@ const handleAddUser = async () => {
                         <div className="bg-white p-6 rounded-lg w-[90%] md:w-[700px] shadow-lg relative">
                             {modalType === 'add' && (
                                 <>
-                                    <h2 className="text-xl font-semibold mb-4 capitalize">Add User</h2>
+                                    <h2 className="text-xl font-semibold mb-4 capitalize">Add Admin/Librarian</h2>
                                     <form
                                         onSubmit={e => { e.preventDefault(); handleAddUser(); }}
                                         className="space-y-3"
@@ -292,7 +286,6 @@ const handleAddUser = async () => {
                                             <option value="student">Student</option>
                                             <option value="staff">Staff</option>
                                         </select>
-                                        <input type="number" name="borrowLimit" value={formData.borrowLimit} onChange={handleChange} placeholder="Borrow Limit" className="w-full border rounded p-2" />
                                         <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Password" className="w-full border rounded p-2" required />
                                         <div className="flex justify-end gap-2">
                                             <button type="button" onClick={handleCloseModal} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
@@ -304,7 +297,7 @@ const handleAddUser = async () => {
 
                             {modalType === 'edit' && selectedUser && (
                                 <>
-                                    <h2 className="text-xl font-semibold mb-4 capitalize">Edit User</h2>
+                                    <h2 className="text-xl font-semibold mb-4 capitalize">Edit Admin/Librarian</h2>
                                     <form
                                         onSubmit={e => { e.preventDefault(); handleEditUser(); }}
                                         className="space-y-3"
@@ -319,7 +312,6 @@ const handleAddUser = async () => {
                                             <option value="student">Student</option>
                                             <option value="staff">Staff</option>
                                         </select>
-                                        <input type="number" name="borrowLimit" value={formData.borrowLimit} onChange={handleChange} placeholder="Borrow Limit" className="w-full border rounded p-2" />
                                         <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="New Password (optional)" className="w-full border rounded p-2" />
                                         <div className="flex justify-end gap-2">
                                             <button type="button" onClick={handleCloseModal} className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
@@ -331,7 +323,7 @@ const handleAddUser = async () => {
 
                             {modalType === 'csv' && (
                                 <>
-                                    <h2 className="text-xl font-semibold mb-4">Import Users from CSV</h2>
+                                    <h2 className="text-xl font-semibold mb-4">Import Admin/Librarian from CSV</h2>
                                     <div
                                         onDragOver={handleDragOver}
                                         onDragLeave={handleDragLeave}
@@ -354,7 +346,7 @@ const handleAddUser = async () => {
                                         </span>
                                     </div>
                                     <p className="text-xs text-gray-500 mb-2">
-                                        CSV columns: firstName, middleName, lastName, email, address, phone, role, borrowLimit, password (required: firstName, lastName, email, address, phone, role, password)
+                                        CSV columns: firstName, middleName, lastName, email, address, phone, role, password (required: firstName, lastName, email, address, phone, role, password)
                                     </p>
                                     {csvError && (
                                         <div className="text-red-600 text-sm mb-2">{csvError}</div>

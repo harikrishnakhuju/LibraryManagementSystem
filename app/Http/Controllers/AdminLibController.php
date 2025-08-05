@@ -6,7 +6,9 @@ use App\Models\AdminLib;
 use App\Http\Requests\StoreAdminLibRequest;
 use App\Http\Requests\UpdateAdminLibRequest;
 use Illuminate\Validation\Rules;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
 
 class AdminLibController extends Controller
 {
@@ -30,7 +32,7 @@ class AdminLibController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreAdminLibRequest $request)
+    public function store(Request $request)
     {
         $request->validate([
             'firstName' => 'required|string|max:255',
@@ -54,7 +56,32 @@ class AdminLibController extends Controller
             'role' => 'librarian'
         ]);
 
-        return response()->json(["Message" => 'Librarian Created Successfully', 'admin'=>$librarian],201);
+        return response()->json($librarian, 201);
+    }
+
+
+    public function bulkStore(Request $request)
+    {
+        $users = $request->input('users', []);
+        if (!is_array($users)) {
+            $users = [$users]; // convert single user object into array
+        }
+        $created = [];
+        foreach ($users as $data) {
+            $validated = validator($data, [
+                'firstName' => 'required|string|max:255',
+                'middleName' => 'nullable|string|max:255',
+                'lastName' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'address' => 'required|string|max:255',
+                'phone' => 'required|string|max:20',
+                'role' => 'required|in:student,staff',
+                'password' => 'required|string|min:6',
+            ])->validate();
+            $validated['password'] = Hash::make($validated['password']);
+            $created[] = \App\Models\AdminLib::create($validated);
+        }
+        return response()->json($created, 201);
     }
 
     /**
@@ -76,9 +103,26 @@ class AdminLibController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAdminLibRequest $request, AdminLib $adminLib)
+    public function update(Request $request, $id)
     {
-        //
+        $user = AdminLib::findOrFail($id);
+        $validated = $request->validate([
+            'firstName' => 'required|string|max:255',
+            'middleName' => 'nullable|string|max:255',
+            'lastName' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'address' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'role' => 'required|in:student,staff',
+            'password' => 'nullable|string|min:6',
+        ]);
+        if (!empty($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
+        } else {
+            unset($validated['password']);
+        }
+        $user->update($validated);
+        return response()->json($user, 200);
     }
 
     /**
