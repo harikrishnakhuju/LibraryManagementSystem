@@ -283,8 +283,8 @@ const UserIndex = () => {
                                         <input name="address" value={formData.address} onChange={handleChange} placeholder="Address" className="w-full border rounded p-2" required />
                                         <input name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone" className="w-full border rounded p-2" required />
                                         <select name="role" value={formData.role} onChange={handleChange} className="w-full border rounded p-2" required>
-                                            <option value="student">Student</option>
-                                            <option value="staff">Staff</option>
+                                            <option value="student">Librarian</option>
+                                            <option value="staff">Admin</option>
                                         </select>
                                         <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Password" className="w-full border rounded p-2" required />
                                         <div className="flex justify-end gap-2">

@@ -42,7 +42,7 @@ class AdminLibController extends Controller
             'address' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
             'role' => 'required|in:admin,librarian',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', Rules\Password::defaults()],
         ]);
 
         $librarian = AdminLib::create([
