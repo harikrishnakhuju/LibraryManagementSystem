@@ -276,7 +276,6 @@ const BookIndex = () => {
                                         <td className="p-2 border">{book.edition}</td>
                                         <td className="p-2 border">{book.noOfCopy ?? ''}</td>
                                         <td className="p-2 border">Rs. {book.price}</td>
-                                        <td className="p-2 border">{book.publisher_id ?? ''}</td>
                                         <td className="p-2 border">{book.published_year ?? ''}</td>
                                         <td className="p-2 border">
                                             <div className="flex justify-center gap-2">

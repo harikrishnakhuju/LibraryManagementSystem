@@ -16,12 +16,12 @@ class UserStatsController extends Controller
         $transactions = BookTransaction::with(['bookCopy.book'])
             ->where('user_id', $userId)
             ->get();
-
-
+            
+            
         // Group by status
-        $borrowedBooks = [];
-        $returnedBooks = [];
-        // $reservedBooks = [];
+            $borrowedBooksList = [];
+            $returnedBooksList = [];
+            $overdueBooksList = [];
 
         foreach ($transactions as $tx) {
             $book = $tx->bookCopy->book ?? null;
@@ -33,13 +33,14 @@ class UserStatsController extends Controller
                 'isOverdue' => $tx->isOverdue,
                 'issueDate' => $tx->issueDate,
                 'returnDate' => $tx->returnDate,
+                'dueDate' => $tx->dueDate,
             ];
             if ($tx->issueDate && !$tx->returnDate) {
-                $borrowedBooks['status'] = 'borrowed';
-                $borrowedBooks[] = $bookInfo;
+                $bookinfo['status'] = 'borrowed';
+                $borrowedBooksList[] = $bookInfo;
             } elseif ($tx->returnDate) {
                 $bookInfo['status'] = $tx->isOverdue ? 'returned (overdue)' : 'returned';
-                $returnedBooks[] = $bookInfo;
+                $returnedBooksList[] = $bookInfo;
             }
         }
 
@@ -76,27 +77,26 @@ class UserStatsController extends Controller
             $returned[$i - 1] = $returnedMonthly[$i] ?? 0;
         }
 
-        $borrowedBooksList = [];
         foreach ($transactions as $tx) {
             if ($tx->status === 'borrowed') {
                 $book = $tx->bookCopy->book ?? null;
                 $borrowedBooksList[] = [
                     'id' => $tx->id,
-                    'title' => $book->title ?? 'Unknown',
-                    'dueDate' => $tx->reserveDate, // or another due date field
+                    'book_title' => $book->title ?? 'Unknown',
+                    'dueDate' => $tx->dueDate, // or another due date field
                 ];
             }
         }
 
 
         return response()->json([
-            'borrowedBooksCount' => count($borrowedBooks),
-            'returnedBooksCount' => count($returnedBooks),
+            'borrowedBooksCount' => count($borrowedBooksList),
+            'returnedBooksCount' => count($returnedBooksList),
             // 'reservedBooksCount' => count($reservedBooks),
             'overdueBooksCount' => count($overdueBooks),
             'borrowedBooksList' => $borrowedBooksList,
-            'returnedBooksList' => $returnedBooks,
-            'overdueBooksList' => $overdueBooks,
+            'returnedBooksList' => $returnedBooksList,
+            'overdueBooksList' => $overdueBooksList,
             // 'reservedBooksList' => $reservedBooks,
             'monthlyActivity' => [
                 'labels' => $labels,

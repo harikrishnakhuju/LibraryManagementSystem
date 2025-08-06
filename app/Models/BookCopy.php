@@ -14,7 +14,7 @@ class BookCopy extends Model
         'book_id',
         'barcode',
         'publisher_id',
-        'status',
+        'isAvailable',
     ];
 
     public function book()

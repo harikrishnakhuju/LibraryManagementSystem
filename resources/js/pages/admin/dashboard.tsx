@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import axios from 'axios';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -188,14 +189,15 @@ export default function Dashboard() {
                     <DashboardCard
                         title="Issue Book"
                         value={stats.issuedBooks}
-                        link="/admin/issue-book"
+                        link="/admin/issueReturn/issue-book"
                         color="from-indigo-700 to-indigo-400"
                         icon="📝"
                     />
+
                     <DashboardCard
                         title="Return Book"
                         value={stats.returnedToday}
-                        link="/admin/return-book"
+                        link="/admin/issueReturn/return-book"
                         color="from-green-700 to-green-400"
                         icon="🔄"
                     />

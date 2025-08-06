@@ -13,9 +13,11 @@ class BookTransaction extends Model
     protected $fillable = [
         'book_copy_id',
         'user_id',
-        'reserveDate',
+        'issueDate',
         'returnDate',
-        'status',
+        'dueDate',
+        'isOverdue',
+        'admin_id',
         'late_fee',
         'is_damaged',
         'is_lost',

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('book_copy_id')->constrained('book_copies')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->date('issueDate')->nullable();
+            $table->date('issueDate');
             $table->date('returnDate')->nullable();
             $table->date('dueDate')->nullable();
             $table->boolean('isOverdue')->default(false);

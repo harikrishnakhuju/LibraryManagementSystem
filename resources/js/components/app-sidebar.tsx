@@ -43,6 +43,11 @@ export function AppSidebar() {
     const mainNavItems: NavItem[] = isAdmin ?
         [
             { title: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+            {
+                title: 'Issue/Return Books',
+                href: '/admin/issueReturn/issue-book',
+                icon: Clock,
+            },
             { title: 'Books', href: '/admin/books', icon: Folder },
             {
                 title: 'Catalog',
