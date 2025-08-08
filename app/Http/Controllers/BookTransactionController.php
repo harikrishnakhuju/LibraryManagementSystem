@@ -102,7 +102,7 @@ class BookTransactionController extends Controller
             }
             $dueDate = Carbon::parse($transaction->dueDate);
             $now = Carbon::now();
-            $daysLate = (int) $dueDate->diffInDays($now);
+            $daysLate = (int) max($dueDate->diffInDays($now), 0);
     
             return response()->json([
                 'dueDate' => $transaction->dueDate,
