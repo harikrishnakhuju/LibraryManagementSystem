@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('role'); // e.g., student, staff
             $table->integer('borrow_days'); // number of days a book can be borrowed
             $table->integer('borrow_limit'); // maximum number of books that can be borrowed
+            $table->float('fine_per_day')->default(0); //fine per day for overdue books)
             $table->timestamps();
         });
     }

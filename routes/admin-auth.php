@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\AdminLibController;
 use App\Http\Controllers\AdminStatsController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\BookTransactionController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\ReturnController;
 use App\Models\Book;
@@ -20,6 +21,7 @@ use App\Models\Event;
 use App\Models\User;
 use App\Models\AdminLib;
 use App\Models\BookTransaction;
+use Database\Seeders\BookTransactionSeeder;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -103,6 +105,7 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
         return Inertia::render('admin/IssueReturn/returnbook');
     });
     Route::post('/issueReturn/issue-book', [IssueController::class, 'issueTransaction']);
-    // Route::post('/admin/issueReturn/return-book', [ReturnController::class, 'store']);
+    Route::post('/issueReturn/return-book', [IssueController::class, 'returnTransaction']);
+    Route::get('/issueReturn/preview-return', [BookTransactionController::class, 'previewReturn']);
 
 });

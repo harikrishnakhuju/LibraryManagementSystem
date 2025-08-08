@@ -25,7 +25,7 @@ class UserStatsController extends Controller
 
         foreach ($transactions as $tx) {
             $book = $tx->bookCopy->book ?? null;
-            $bookInfo = [
+            $bookInfoBorrow = [
                 'transaction_id' => $tx->id,
                 'book_title' => $book->title ?? 'Unknown',
                 'barcode' => $tx->bookCopy->barcode ?? 'Unknown',
@@ -35,12 +35,41 @@ class UserStatsController extends Controller
                 'returnDate' => $tx->returnDate,
                 'dueDate' => $tx->dueDate,
             ];
-            if ($tx->issueDate && !$tx->returnDate) {
-                $bookinfo['status'] = 'borrowed';
-                $borrowedBooksList[] = $bookInfo;
-            } elseif ($tx->returnDate) {
-                $bookInfo['status'] = $tx->isOverdue ? 'returned (overdue)' : 'returned';
-                $returnedBooksList[] = $bookInfo;
+            $bookInfoReturn = [
+                'transaction_id' => $tx->id,
+                'book_title' => $book->title ?? 'Unknown',
+                'barcode' => $tx->bookCopy->barcode ?? 'Unknown',
+                'status' => null,
+                'isOverdue' => $tx->isOverdue,
+                'issueDate' => $tx->issueDate,
+                'returnDate' => $tx->returnDate,
+                'dueDate' => $tx->dueDate,
+            ];
+            $bookInfoOverdue = [
+                'transaction_id' => $tx->id,
+                'book_title' => $book->title ?? 'Unknown',
+                'barcode' => $tx->bookCopy->barcode ?? 'Unknown',
+                'status' => null,
+                'isOverdue' => $tx->isOverdue,
+                'issueDate' => $tx->issueDate,
+                'returnDate' => $tx->returnDate,
+                'dueDate' => $tx->dueDate,
+            ];
+            if ($tx->issueDate && !$tx->returnDate && (bool)$tx->isOverdue){
+                $bookInfoBorrow['status'] = 'borrowed(Overdue)';
+                $borrowedBooksList[] = $bookInfoBorrow;
+            }elseif ($tx->issueDate && !$tx->returnDate) {
+                $bookInfoBorrow['status'] = 'borrowed';
+                $borrowedBooksList[] = $bookInfoBorrow;
+            } 
+            if ($tx->returnDate) {
+                $bookInfoReturn['status'] = $tx->isOverdue ? 'returned (overdue)' : 'returned';
+                $borrowedBooksList[] = $bookInfoReturn;
+                $returnedBooksList[] = $bookInfoReturn;
+            }
+            if($tx->isOverdue){
+                $bookInfoOverdue['status'] = 'Overdue';
+                $overdueBooksList[] = $bookInfoOverdue;
             }
         }
 
@@ -53,7 +82,7 @@ class UserStatsController extends Controller
             ->where('user_id', $userId)
             ->whereYear('issueDate', now()->year)
             ->whereNotNull('issueDate')
-            ->whereNull('returnDate')
+            // ->whereNull('returnDate')
             ->groupBy('month')
             ->pluck('count', 'month');
 
@@ -66,11 +95,11 @@ class UserStatsController extends Controller
             ->pluck('count', 'month');
 
         // Get overdue books
-        $overdueBooks = BookTransaction::where('user_id', $userId)
-            ->where('isOverdue',true)
-            ->where('returnDate', '<', now())
-            ->with(['bookCopy.book'])
-            ->get();
+        // $overdueBooks = BookTransaction::where('user_id', $userId)
+        //     ->where('isOverdue',true)
+        //     // ->where('returnDate', '<', now())
+        //     ->with(['bookCopy.book'])
+        //     ->get();
 
         for ($i = 1; $i <= 12; $i++) {
             $borrowed[$i - 1] = $borrowedMonthly[$i] ?? 0;
@@ -86,35 +115,37 @@ class UserStatsController extends Controller
                     'dueDate' => $tx->dueDate, // or another due date field
                 ];
             }
+            if ($tx->status === 'returned (overdue)' || $tx->status === 'returned') {
+                $book = $tx->bookCopy->book ?? null;
+                $returnedBooksList[] = [
+                    'id' => $tx->id,
+                    'book_title' => $book->title ?? 'Unknown',
+                    'returnDate' => $tx->returnDate, // or another due date field
+                ];
+            }
+            if ($tx->status === 'Overdue') {
+                $book = $tx->bookCopy->book ?? null;
+                $overdueBooksList[] = [
+                    'id' => $tx->id,
+                    'book_title' => $book->title ?? 'Unknown',
+                    'dueDate' => $tx->dueDate, // or another due date field
+                ];
+            }
         }
 
 
         return response()->json([
             'borrowedBooksCount' => count($borrowedBooksList),
             'returnedBooksCount' => count($returnedBooksList),
-            // 'reservedBooksCount' => count($reservedBooks),
-            'overdueBooksCount' => count($overdueBooks),
+            'overdueBooksCount' => count($overdueBooksList),
             'borrowedBooksList' => $borrowedBooksList,
             'returnedBooksList' => $returnedBooksList,
             'overdueBooksList' => $overdueBooksList,
-            // 'reservedBooksList' => $reservedBooks,
             'monthlyActivity' => [
                 'labels' => $labels,
                 'borrowed' => $borrowed,
                 'returned' => $returned,
             ],
         ]);
-
-        // return response()->json([
-        //     'userheid' => $userId,
-        //     'transactions' => $transactions,
-        // 'bookcopyid' => $book_copy_id,
-        // 'borrowedBooks' => $borrowedBooks,
-        // 'returnedBooks' => $returnedBooks,
-        // 'overdueBooks' => $overdueBooks,
-        // 'borrowedBooksList' => $borrowedBooksList,
-        // 'returnedBooksList' => $returnedBooksList,
-        // 'overdueBooksList' => $overdueBooksList,
-        // ]);
     }
 }

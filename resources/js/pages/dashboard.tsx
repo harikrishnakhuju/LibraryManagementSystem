@@ -11,18 +11,21 @@ type BorrowedBook = {
     transaction_id: number;
     book_title: string;
     dueDate: string; // or reserveDate if that's what your backend sends
+    status: string; // borrowed returned return(overdue) overdue
 };
 
 type ReturnedBook = {
     transaction_id: number;
     book_title: string;
-    returnedDate: string; // or reserveDate if that's what your backend sends
+    returnDate: string; // or reserveDate if that's what your backend sends
+    status: string; // borrowed returned return(overdue) overdue
 };
 
 type OverdueBook = {
     transaction_id: number;
     book_title: string;
     dueDate: string; // or reserveDate if that's what your backend sends
+    status: string; // borrowed returned return(overdue) overdue
 };
 
 export default function Dashboard() {
@@ -232,7 +235,8 @@ export default function Dashboard() {
                             items={borrowedBooksList.map(book => ({
                                 id: book.transaction_id,
                                 label: book.book_title,
-                                meta: `Due: ${book.dueDate}`,
+                                dateMeta: `Due: ${book.dueDate}`,
+                                statusMeta: `status: ${book.status}`,
                             }))}
                         />
                         {/* Returned Books Toggle */}
@@ -245,9 +249,10 @@ export default function Dashboard() {
                             items={returnedBooksList.map(book => ({
                                 id: book.transaction_id,
                                 label: book.book_title,
-                                meta: `Returned: ${book.returnedDate}`,
+                                dateMeta: `Returned: ${book.returnDate}`,
+                                statusMeta: `status: ${book.status}`,
                             }))}
-                        />
+                        />  
                         {/* Overdue Books Toggle */}
                         <DropdownList
                             title="Overdue Books"
@@ -258,7 +263,8 @@ export default function Dashboard() {
                             items={overdueBooksList.map(book => ({
                                 id: book.transaction_id,
                                 label: book.book_title,
-                                meta: `Due: ${book.dueDate}`,
+                                dateMeta: `Due: ${book.dueDate}`,
+                                statusMeta: `status: ${book.status}`,
                             }))}
                         />
                     </div>
@@ -303,7 +309,7 @@ function DropdownList({
     show: boolean;
     setShow: (v: boolean) => void;
     color: 'blue' | 'orange' | 'red';
-    items: { id: number; label: string; meta: string }[];
+    items: { id: number; label: string; dateMeta: string; statusMeta: string; }[];
 }) {
     const colorMap = {
         blue: 'text-blue-700 dark:text-blue-300',
@@ -329,7 +335,8 @@ function DropdownList({
                     {items.map(item => (
                         <li key={item.id} className="py-2 text-sm">
                             <span className="font-medium">{item.label}</span>
-                            <span className="text-neutral-500 dark:text-neutral-400 block">{item.meta}</span>
+                            <span className="text-neutral-500 dark:text-neutral-400 block">{item.dateMeta}</span>
+                            <span className="text-neutral-500 dark:text-neutral-400 block">{item.statusMeta}</span>
                         </li>
                     ))}
                 </ul>
