@@ -31,7 +31,7 @@ class CheckOverdueBooks extends Command
     public function handle()
     {
         $today = Carbon::today();
-        $feePerDay = 5;
+        // $feePerDay = 5;
 
 
 
