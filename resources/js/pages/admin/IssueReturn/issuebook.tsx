@@ -6,6 +6,10 @@ import { Link } from '@inertiajs/react';
 import { BookOpen, Clock } from 'lucide-react';
 import type { BreadcrumbItem } from '@/types';
 import { cn } from '@/lib/utils';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { router } from '@inertiajs/react';
+
 
 const tabs = [
     {
@@ -90,18 +94,36 @@ const IssueBookIndex = ({ children }: { children: React.ReactNode }) => {
             return updated;
         });
     };
+const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+        const response = await axios.post('/admin/issueReturn/issue-book', issueData);
+        
+        toast.success('✅ Book issued successfully!', {
+            autoClose: 1500,
+            onClose: () => {
+                // Redirect after toast closes
+                router.visit('/admin/issueReturn/issue-book');
+            }
+        });
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const response = await axios.post('/admin/issueReturn/issue-book', issueData);
-            console.log(response.data.message);       // 👈 Shows: "Book issued successfully"
-            console.log(response.data.transaction);   // 👈 Use this data in your UI
-            // Trigger UI update, toast, or redirect here
-        } catch (error: any) {
-            console.error(error.response?.data || error.message);
-        }
-    };
+        // Optional: Reset the form
+        setIssueData({
+            book_copy_id: '',
+            book_title: '',
+            book_author: '',
+            user_id: '',
+            issueDate: today,
+            user_name: '',
+            user_email: '',
+            user_role: '',
+        });
+
+    } catch (error: any) {
+        console.error(error.response?.data || error.message);
+        toast.error('❌ Failed to issue book.');
+    }
+};
 
     return (
         <AppLayout breadcrumbs={[{ title: 'Issue Book', href: '/issue-book' }]}>
@@ -128,131 +150,151 @@ const IssueBookIndex = ({ children }: { children: React.ReactNode }) => {
                         );
                     })}
                 </div>
+<div className="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-2xl shadow-md border">
+    <h2 className="text-2xl font-semibold text-gray-800 mb-6">📚 Issue a Book</h2>
 
-                <div className="p-4">
-                    <h1 className="text-2xl font-bold mb-4">Issue Book</h1>
-                    <div className="max-w-xl mx-auto mt-10 p-6 bg-white rounded shadow">
-                        <h2 className="text-2xl font-bold mb-4">Issue Book</h2>
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            {/* User ID Input */}
-                            <label htmlFor="userid">User Id:
-                            </label>
-                            {/* 
-                            {issueData.user_id && (
-                                <div className="mb-2 text-sm text-gray-700">
-                                    <strong>{issueData.user_name}</strong> ({issueData.user_email} | {issueData.user_role})
-                                </div>
-                            )} */}
+    <form onSubmit={handleSubmit} className="space-y-6">
+        {/* User Details */}
+        <div>
+            <h3 className="text-lg font-medium text-gray-700 mb-2">👤 User Information</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">User ID</label>
+                    <input
+                        type="text"
+                        name="user_id"
+                        value={issueData.user_id}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Enter user ID"
+                        required
+                    />
+                </div>
 
-                            <input
-                                name="user_id"
-                                value={issueData.user_id}
-                                onChange={handleChange}
-                                placeholder="Enter User ID"
-                                className="w-full border rounded p-2"
-                                required
-                            />
-                            <label htmlFor="userid">User Name:
-                            </label>
-                            <input
-                                name="user_id"
-                                value={issueData.user_name}
-                                onChange={handleChange}
-                                placeholder="Enter User Name"
-                                className="w-full border rounded p-2"
-                                required
-                            />
-                            <label htmlFor="userid">User Email:
-                            </label>
-                            <input
-                                name="user_id"
-                                value={issueData.user_email}
-                                onChange={handleChange}
-                                placeholder="Enter User Email"
-                                className="w-full border rounded p-2"
-                                required
-                            />
-                            <label htmlFor="userid">User Type:
-                            </label>
-                            <input
-                                name="user_id"
-                                value={issueData.user_role}
-                                onChange={handleChange}
-                                placeholder="Enter User Type"
-                                className="w-full border rounded p-2"
-                                required
-                            />
-                            {/* Book Copy ID Input */}
-                            <label htmlFor="userid">Book Id:
-                            </label>
-                            <input
-                                name="book_copy_id"
-                                value={issueData.book_copy_id}
-                                onChange={handleChange}
-                                placeholder="Enter Book Copy ID or Barcode"
-                                className="w-full border rounded p-2"
-                                required
-                            />
-                            <label htmlFor="userid">Book Title:
-                            </label>
-                            <input
-                                type="text"
-                                name="book_title"
-                                value={issueData.book_title}
-                                onChange={handleChange}
-                                placeholder="Enter Book Title"
-                                className="w-full border rounded p-2"
-                            />
-                            <label htmlFor="userid">Book Author:
-                            </label>
-                            <input
-                                type="text"
-                                name="book_author"
-                                value={issueData.book_author}
-                                onChange={handleChange}
-                                placeholder="Enter Book Author"
-                                className="w-full border rounded p-2"
-                            />
-                            <label htmlFor="issueDate">Issue Date:</label>
-                            <input
-                                type="date"
-                                name='issueDate'
-                                value={issueData.issueDate}
-                                onChange={handleChange}
-                                className="w-full border rounded p-2"
-                                required
-                            />
-                            <div className="flex gap-3 justify-end mt-4">
-                                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                                    Issue Book
-                                </button>
+                <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">User Name</label>
+                    <input
+                        type="text"
+                        name="user_name"
+                        value={issueData.user_name}
+                        disabled
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md text-gray-700"
+                        placeholder="Auto-filled"
+                    />
+                </div>
 
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setIssueData({
-                                            book_copy_id: '',
-                                            book_title: '',
-                                            book_author: '',
-                                            user_id: '',
-                                            issueDate: today,
-                                            user_name: '',
-                                            user_email: '',
-                                            user_role: '',
-                                        });
-                                    }}
-                                    className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Email</label>
+                    <input
+                        type="text"
+                        name="user_email"
+                        value={issueData.user_email}
+                        disabled
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md text-gray-700"
+                        placeholder="Auto-filled"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">User Role</label>
+                    <input
+                        type="text"
+                        name="user_role"
+                        value={issueData.user_role}
+                        disabled
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md text-gray-700"
+                        placeholder="Auto-filled"
+                    />
+                </div>
+            </div>
+        </div>
+
+        {/* Book Details */}
+        <div>
+            <h3 className="text-lg font-medium text-gray-700 mb-2">📖 Book Information</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Book Copy ID / Barcode</label>
+                    <input
+                        name="book_copy_id"
+                        value={issueData.book_copy_id}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Enter barcode or ID"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Book Title</label>
+                    <input
+                        name="book_title"
+                        value={issueData.book_title}
+                        disabled
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md text-gray-700"
+                        placeholder="Auto-filled"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Book Author</label>
+                    <input
+                        name="book_author"
+                        value={issueData.book_author}
+                        disabled
+                        className="w-full px-3 py-2 bg-gray-100 border border-gray-200 rounded-md text-gray-700"
+                        placeholder="Auto-filled"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-1">Issue Date</label>
+                    <input
+                        type="date"
+                        name="issueDate"
+                        value={issueData.issueDate}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    />
+                </div>
+            </div>
+        </div>
+
+        {/* Form Actions */}
+        <div className="flex justify-end gap-4 pt-4 border-t">
+            <button
+                type="button"
+                onClick={() =>
+                    setIssueData({
+                        book_copy_id: '',
+                        book_title: '',
+                        book_author: '',
+                        user_id: '',
+                        issueDate: today,
+                        user_name: '',
+                        user_email: '',
+                        user_role: '',
+                    })
+                }
+                className="px-4 py-2 rounded-md bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-300"
+            >
+                Cancel
+            </button>
+            <button
+                type="submit"
+                className="px-5 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+            >
+                Issue Book
+            </button>
+        </div>
+    </form>
+</div>
+
 
                 </div>
 
 
-            </div>
         </AppLayout>
     );
 };

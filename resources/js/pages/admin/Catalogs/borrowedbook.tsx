@@ -90,8 +90,8 @@ const BorrowedBooksIndex = ( { children }: { children: React.ReactNode }) => {
                         <thead>
                             <tr className="bg-gray-200">
                                 <th className="p-2 border">Name</th>
-                                <th className="p-2 border">Author</th>
-                                <th className="p-2 border">Category</th>
+                                {/* <th className="p-2 border">Author</th>
+                                <th className="p-2 border">Category</th> */}
                                 <th className="p-2 border">Edition</th>
                                 <th className="p-2 border">Price</th>
                             </tr>
@@ -99,9 +99,13 @@ const BorrowedBooksIndex = ( { children }: { children: React.ReactNode }) => {
                         <tbody>
                             {books.map((book) => (
                                 <tr key={book.id}>
-                                    <td className="p-2 border">{book.title}</td>
-                                    <td className="p-2 border">{book.author}</td>
-                                    <td className="p-2 border">{book.category}</td>
+                                    <td className="p-2 border text-center align-top">
+                                            <div className="flex flex-col">
+                                                <span className="font-semibold text-gray-900">{book.title}</span>
+                                                <span className="text-sm text-gray-600">Author: {book.author}</span>
+                                                <span className="text-xs text-gray-500 italic">Category: {book.category}</span>
+                                            </div>
+                                        </td>
                                     <td className="p-2 border">{book.edition}</td>
                                     <td className="p-2 border">Rs. {book.price}</td>
                                 </tr>
