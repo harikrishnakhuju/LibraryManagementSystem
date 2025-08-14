@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\admin\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\admin\Auth\ConfirmablePasswordController;
-use App\Http\Controllers\admin\Auth\EmailVerificationNotificationController;
-use App\Http\Controllers\admin\Auth\EmailVerificationPromptController;
-use App\Http\Controllers\admin\Auth\NewPasswordController;
-use App\Http\Controllers\admin\Auth\PasswordResetLinkController;
-use App\Http\Controllers\admin\Auth\RegisteredUserController;
-use App\Http\Controllers\admin\Auth\VerifyEmailController;
+use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Admin\Auth\ConfirmablePasswordController;
+use App\Http\Controllers\Admin\Auth\EmailVerificationNotificationController;
+use App\Http\Controllers\Admin\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Admin\Auth\NewPasswordController;
+use App\Http\Controllers\Admin\Auth\PasswordResetLinkController;
+// use App\Http\Controllers\Admin\Auth\RegisteredUserController;
+use App\Http\Controllers\Admin\Auth\VerifyEmailController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\AdminLibController;
@@ -15,7 +15,7 @@ use App\Http\Controllers\AdminStatsController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\BookTransactionController;
 use App\Http\Controllers\IssueController;
-use App\Http\Controllers\ReturnController;
+// use App\Http\Controllers\ReturnController;
 use App\Models\Book;
 use App\Models\Event;
 use App\Models\User;
@@ -42,7 +42,9 @@ Route::prefix('admin')->middleware('auth:admin')->group(function () {
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])->name('admin.password.confirm');
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
-    Route::get('dashboard', fn() => Inertia::render('admin/dashboard'))->name('admin.dashboard');
+    Route::get('dashboard', function(){
+        return Inertia::render('admin/dashboard');
+    })->name('admin.dashboard');
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('admin.logout');
 
     // User Management (for both page and API)

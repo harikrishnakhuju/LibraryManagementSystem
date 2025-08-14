@@ -17,7 +17,7 @@ Route::get('/user', function (Request $request) {
 Route::get('/users', [UserController::class, 'index']);
 Route::apiResource('students', StudentController::class);
 Route::apiResource('staff', StaffController::class);
-Route::apiResource('books', BookController::class);
+// Route::apiResource('books', BookController::class);
 Route::apiResource('book-copies',BookCopyController::class);
 Route::get('/books', [BookController::class, 'index']);
 Route::get('books/${id}',[BookController::class,'show']);
